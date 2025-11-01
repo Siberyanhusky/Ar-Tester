@@ -97,10 +97,52 @@
             position: fixed;
             top: 90px;
             right: 20px;
-            display: flex;
+            display: none;
             flex-direction: column;
             gap: 12px;
             z-index: 10000;
+        }
+        
+        .close-btn {
+            position: fixed;
+            top: 90px;
+            left: 20px;
+            background: rgba(220, 20, 60, 0.95);
+            border: 2px solid #FFD700;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        
+        .close-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .scan-status {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(34, 139, 34, 0.95);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 15000;
+            display: none;
+            text-align: center;
+            border: 3px solid #FFD700;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.8);
         }
         
         .control-btn {
@@ -219,8 +261,15 @@
 <body>
     <div class="header">
         <h1>🏛️ AR MARKER - CANDI BOROBUDUR</h1>
-        <p>Arahkan kamera ke marker untuk melihat model 3D</p>
+        <p id="headerStatus">Arahkan kamera ke marker untuk melihat model 3D</p>
     </div>
+    
+    <div class="scan-status" id="scanStatus">
+        ✅ CANDI BERHASIL DI-SCAN!<br>
+        <span style="font-size: 14px;">Model akan tetap muncul</span>
+    </div>
+    
+    <button class="close-btn" id="closeBtn" onclick="closeModel()">✕</button>
     
     <div class="instruction" id="instruction">
         <h2>📱 Cara Menggunakan AR Marker</h2>
@@ -323,11 +372,12 @@
         let currentScale = 0.8;
         let currentRotation = 0;
         let candiContainer = null;
+        let modelScanned = false;
+        let markerElement = null;
         
         // Pastikan library loaded
         window.addEventListener('load', function() {
             console.log('Page loaded');
-            // Show instruction after libraries loaded
             setTimeout(() => {
                 const instruction = document.getElementById('instruction');
                 if (instruction) {
@@ -348,26 +398,168 @@
             
             const instruction = document.getElementById('instruction');
             const arScene = document.getElementById('arScene');
-            const controls = document.getElementById('controls');
             
             if (instruction) instruction.style.display = 'none';
             if (arScene) arScene.style.display = 'block';
-            if (controls) controls.style.display = 'flex';
             
-            // Show info panel by default
-            setTimeout(() => {
-                toggleInfo();
-            }, 1000);
-            
-            // Wait for AR.js to initialize
             setTimeout(() => {
                 createCandiBorobudur();
                 setupMarkerEvents();
             }, 1500);
         }
         
+        function setupMarkerEvents() {
+            markerElement = document.querySelector('#marker');
+            
+            if (!markerElement) {
+                console.error('Marker element not found');
+                return;
+            }
+            
+            markerElement.addEventListener('markerFound', () => {
+                console.log('Marker ditemukan!');
+                markerDetected = true;
+                
+                if (!modelScanned) {
+                    modelScanned = true;
+                    onFirstScan();
+                }
+            });
+            
+            markerElement.addEventListener('markerLost', () => {
+                console.log('Marker hilang - tapi model tetap ada!');
+                markerDetected = false;
+                // Model TETAP VISIBLE karena persistent mode
+            });
+        }
+        
+        function onFirstScan() {
+            console.log('First scan detected!');
+            
+            // Show success message
+            const scanStatus = document.getElementById('scanStatus');
+            scanStatus.style.display = 'block';
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                scanStatus.style.display = 'none';
+            }, 3000);
+            
+            // Update header
+            const headerStatus = document.getElementById('headerStatus');
+            if (headerStatus) {
+                headerStatus.textContent = '✅ Model berhasil dimuat - Marker bisa dilepas';
+            }
+            
+            // Show controls and close button
+            document.getElementById('controls').style.display = 'flex';
+            document.getElementById('closeBtn').style.display = 'flex';
+            
+            // Make model persistent (detach from marker tracking)
+            setTimeout(() => {
+                makeModelPersistent();
+            }, 500);
+            
+            // Show info panel automatically
+            setTimeout(() => {
+                const infoPanel = document.getElementById('infoPanel');
+                if (infoPanel) {
+                    infoPanel.style.display = 'block';
+                }
+            }, 3500);
+        }
+        
+        function makeModelPersistent() {
+            if (!candiContainer || !markerElement) return;
+            
+            // Get current world position
+            const worldPos = new THREE.Vector3();
+            candiContainer.object3D.getWorldPosition(worldPos);
+            
+            // Get current world rotation
+            const worldRot = new THREE.Euler();
+            worldRot.setFromQuaternion(candiContainer.object3D.getWorldQuaternion(new THREE.Quaternion()));
+            
+            // Remove from marker
+            const scene = document.querySelector('a-scene');
+            const camera = document.querySelector('[camera]');
+            
+            // Create persistent container
+            const persistentContainer = document.createElement('a-entity');
+            persistentContainer.setAttribute('id', 'persistentCandi');
+            persistentContainer.setAttribute('position', {
+                x: worldPos.x,
+                y: worldPos.y,
+                z: worldPos.z
+            });
+            persistentContainer.setAttribute('rotation', {
+                x: THREE.MathUtils.radToDeg(worldRot.x),
+                y: THREE.MathUtils.radToDeg(worldRot.y),
+                z: THREE.MathUtils.radToDeg(worldRot.z)
+            });
+            persistentContainer.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
+            
+            // Clone all children from candiContainer
+            const children = candiContainer.children;
+            for (let i = 0; i < children.length; i++) {
+                const clone = children[i].cloneNode(true);
+                persistentContainer.appendChild(clone);
+            }
+            
+            // Add to scene (not marker)
+            scene.appendChild(persistentContainer);
+            
+            // Hide original
+            candiContainer.setAttribute('visible', 'false');
+            
+            // Update reference
+            candiContainer = persistentContainer;
+            
+            console.log('Model is now persistent!');
+        }
+        
+        function closeModel() {
+            console.log('Closing model...');
+            
+            // Hide all UI
+            document.getElementById('controls').style.display = 'none';
+            document.getElementById('closeBtn').style.display = 'none';
+            document.getElementById('infoPanel').style.display = 'none';
+            
+            // Remove persistent model
+            const persistentModel = document.querySelector('#persistentCandi');
+            if (persistentModel) {
+                persistentModel.parentNode.removeChild(persistentModel);
+            }
+            
+            // Show original container again
+            if (candiContainer) {
+                candiContainer.setAttribute('visible', 'true');
+            }
+            
+            // Reset state
+            modelScanned = false;
+            
+            // Update header
+            const headerStatus = document.getElementById('headerStatus');
+            if (headerStatus) {
+                headerStatus.textContent = 'Arahkan kamera ke marker untuk melihat model 3D';
+            }
+            
+            // Show instruction
+            const instruction = document.getElementById('instruction');
+            if (instruction) {
+                instruction.innerHTML = '<h2>📱 Scan Ulang Marker</h2><p style="margin: 15px 0;">Arahkan kamera ke marker Hiro untuk memuat model Candi Borobudur lagi</p><button onclick="startAR()">Mulai AR</button><br><a href="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png" download class="download-marker" target="_blank">⬇️ Download Marker</a>';
+                instruction.style.display = 'block';
+            }
+            
+            console.log('Model closed. Ready for re-scan.');
+        }
+        
         function scaleUp() {
-            if (!candiContainer) candiContainer = document.querySelector('#candiContainer');
+            if (!candiContainer) {
+                candiContainer = document.querySelector('#persistentCandi') || document.querySelector('#candiContainer');
+            }
             if (candiContainer) {
                 currentScale = Math.min(currentScale + 0.1, 2.0);
                 candiContainer.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
@@ -376,7 +568,9 @@
         }
         
         function scaleDown() {
-            if (!candiContainer) candiContainer = document.querySelector('#candiContainer');
+            if (!candiContainer) {
+                candiContainer = document.querySelector('#persistentCandi') || document.querySelector('#candiContainer');
+            }
             if (candiContainer) {
                 currentScale = Math.max(currentScale - 0.1, 0.3);
                 candiContainer.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
@@ -385,7 +579,9 @@
         }
         
         function rotateModel() {
-            if (!candiContainer) candiContainer = document.querySelector('#candiContainer');
+            if (!candiContainer) {
+                candiContainer = document.querySelector('#persistentCandi') || document.querySelector('#candiContainer');
+            }
             if (candiContainer) {
                 currentRotation += 45;
                 if (currentRotation >= 360) currentRotation = 0;
