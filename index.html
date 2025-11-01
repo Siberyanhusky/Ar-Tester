@@ -358,9 +358,9 @@
         <a-entity camera></a-entity>
         
         <!-- Marker -->
-        <a-marker preset="hiro" id="marker" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5">
+        <a-marker preset="hiro" id="marker" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5" raycaster="objects: .clickable">
             <!-- Container untuk model 3D kita -->
-            <a-entity id="candiContainer" position="0 0.5 0" scale="0.8 0.8 0.8">
+            <a-entity id="candiContainer" position="0 0.5 0" scale="0.8 0.8 0.8" visible="true">
                 <!-- Model 3D akan ditambahkan via JavaScript -->
             </a-entity>
         </a-marker>
@@ -410,6 +410,7 @@
         
         function setupMarkerEvents() {
             markerElement = document.querySelector('#marker');
+            candiContainer = document.querySelector('#candiContainer');
             
             if (!markerElement) {
                 console.error('Marker element not found');
@@ -420,6 +421,11 @@
                 console.log('Marker ditemukan!');
                 markerDetected = true;
                 
+                // Make sure container is visible
+                if (candiContainer) {
+                    candiContainer.setAttribute('visible', 'true');
+                }
+                
                 if (!modelScanned) {
                     modelScanned = true;
                     onFirstScan();
@@ -427,9 +433,13 @@
             });
             
             markerElement.addEventListener('markerLost', () => {
-                console.log('Marker hilang - tapi model tetap ada!');
+                console.log('Marker hilang - MODEL TETAP MUNCUL!');
                 markerDetected = false;
-                // Model TETAP VISIBLE karena persistent mode
+                
+                // CRITICAL: Keep model visible even when marker is lost
+                if (candiContainer) {
+                    candiContainer.setAttribute('visible', 'true');
+                }
             });
         }
         
@@ -438,12 +448,12 @@
             
             // Show success message
             const scanStatus = document.getElementById('scanStatus');
-            scanStatus.style.display = 'block';
-            
-            // Hide after 3 seconds
-            setTimeout(() => {
-                scanStatus.style.display = 'none';
-            }, 3000);
+            if (scanStatus) {
+                scanStatus.style.display = 'block';
+                setTimeout(() => {
+                    scanStatus.style.display = 'none';
+                }, 3000);
+            }
             
             // Update header
             const headerStatus = document.getElementById('headerStatus');
@@ -452,93 +462,54 @@
             }
             
             // Show controls and close button
-            document.getElementById('controls').style.display = 'flex';
-            document.getElementById('closeBtn').style.display = 'flex';
+            const controls = document.getElementById('controls');
+            const closeBtn = document.getElementById('closeBtn');
+            if (controls) controls.style.display = 'flex';
+            if (closeBtn) closeBtn.style.display = 'flex';
             
-            // Make model persistent (detach from marker tracking)
-            setTimeout(() => {
-                makeModelPersistent();
-            }, 500);
-            
-            // Show info panel automatically
+            // PENTING: Show info panel automatically after 2 seconds
             setTimeout(() => {
                 const infoPanel = document.getElementById('infoPanel');
                 if (infoPanel) {
                     infoPanel.style.display = 'block';
+                    console.log('Info panel displayed!');
                 }
-            }, 3500);
-        }
-        
-        function makeModelPersistent() {
-            if (!candiContainer || !markerElement) return;
+            }, 2000);
             
-            // Get current world position
-            const worldPos = new THREE.Vector3();
-            candiContainer.object3D.getWorldPosition(worldPos);
-            
-            // Get current world rotation
-            const worldRot = new THREE.Euler();
-            worldRot.setFromQuaternion(candiContainer.object3D.getWorldQuaternion(new THREE.Quaternion()));
-            
-            // Remove from marker
-            const scene = document.querySelector('a-scene');
-            const camera = document.querySelector('[camera]');
-            
-            // Create persistent container
-            const persistentContainer = document.createElement('a-entity');
-            persistentContainer.setAttribute('id', 'persistentCandi');
-            persistentContainer.setAttribute('position', {
-                x: worldPos.x,
-                y: worldPos.y,
-                z: worldPos.z
-            });
-            persistentContainer.setAttribute('rotation', {
-                x: THREE.MathUtils.radToDeg(worldRot.x),
-                y: THREE.MathUtils.radToDeg(worldRot.y),
-                z: THREE.MathUtils.radToDeg(worldRot.z)
-            });
-            persistentContainer.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
-            
-            // Clone all children from candiContainer
-            const children = candiContainer.children;
-            for (let i = 0; i < children.length; i++) {
-                const clone = children[i].cloneNode(true);
-                persistentContainer.appendChild(clone);
-            }
-            
-            // Add to scene (not marker)
-            scene.appendChild(persistentContainer);
-            
-            // Hide original
-            candiContainer.setAttribute('visible', 'false');
-            
-            // Update reference
-            candiContainer = persistentContainer;
-            
-            console.log('Model is now persistent!');
+            // Keep checking visibility every frame
+            const keepVisible = setInterval(() => {
+                if (candiContainer && modelScanned) {
+                    candiContainer.setAttribute('visible', 'true');
+                } else {
+                    clearInterval(keepVisible);
+                }
+            }, 100);
         }
         
         function closeModel() {
             console.log('Closing model...');
             
-            // Hide all UI
-            document.getElementById('controls').style.display = 'none';
-            document.getElementById('closeBtn').style.display = 'none';
-            document.getElementById('infoPanel').style.display = 'none';
+            // Reset container reference
+            candiContainer = document.querySelector('#candiContainer');
             
-            // Remove persistent model
-            const persistentModel = document.querySelector('#persistentCandi');
-            if (persistentModel) {
-                persistentModel.parentNode.removeChild(persistentModel);
-            }
-            
-            // Show original container again
+            // Hide model
             if (candiContainer) {
-                candiContainer.setAttribute('visible', 'true');
+                candiContainer.setAttribute('visible', 'false');
             }
+            
+            // Hide all UI
+            const controls = document.getElementById('controls');
+            const closeBtn = document.getElementById('closeBtn');
+            const infoPanel = document.getElementById('infoPanel');
+            
+            if (controls) controls.style.display = 'none';
+            if (closeBtn) closeBtn.style.display = 'none';
+            if (infoPanel) infoPanel.style.display = 'none';
             
             // Reset state
             modelScanned = false;
+            currentScale = 0.8;
+            currentRotation = 0;
             
             // Update header
             const headerStatus = document.getElementById('headerStatus');
@@ -546,20 +517,11 @@
                 headerStatus.textContent = 'Arahkan kamera ke marker untuk melihat model 3D';
             }
             
-            // Show instruction
-            const instruction = document.getElementById('instruction');
-            if (instruction) {
-                instruction.innerHTML = '<h2>📱 Scan Ulang Marker</h2><p style="margin: 15px 0;">Arahkan kamera ke marker Hiro untuk memuat model Candi Borobudur lagi</p><button onclick="startAR()">Mulai AR</button><br><a href="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png" download class="download-marker" target="_blank">⬇️ Download Marker</a>';
-                instruction.style.display = 'block';
-            }
-            
             console.log('Model closed. Ready for re-scan.');
         }
         
         function scaleUp() {
-            if (!candiContainer) {
-                candiContainer = document.querySelector('#persistentCandi') || document.querySelector('#candiContainer');
-            }
+            if (!candiContainer) candiContainer = document.querySelector('#candiContainer');
             if (candiContainer) {
                 currentScale = Math.min(currentScale + 0.1, 2.0);
                 candiContainer.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
@@ -568,9 +530,7 @@
         }
         
         function scaleDown() {
-            if (!candiContainer) {
-                candiContainer = document.querySelector('#persistentCandi') || document.querySelector('#candiContainer');
-            }
+            if (!candiContainer) candiContainer = document.querySelector('#candiContainer');
             if (candiContainer) {
                 currentScale = Math.max(currentScale - 0.1, 0.3);
                 candiContainer.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
@@ -579,9 +539,7 @@
         }
         
         function rotateModel() {
-            if (!candiContainer) {
-                candiContainer = document.querySelector('#persistentCandi') || document.querySelector('#candiContainer');
-            }
+            if (!candiContainer) candiContainer = document.querySelector('#candiContainer');
             if (candiContainer) {
                 currentRotation += 45;
                 if (currentRotation >= 360) currentRotation = 0;
