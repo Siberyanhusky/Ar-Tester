@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Candi Borobudur - Pembelajaran Sejarah</title>
+    <title>AR Marker - Candi Borobudur</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ar.js/2.2.2/aframe-ar.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -15,46 +16,22 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
-            background: #000;
-        }
-        
-        #container {
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-        }
-        
-        #video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        #canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
         }
         
         .header {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
             background: linear-gradient(180deg, rgba(139,69,19,0.95) 0%, rgba(139,69,19,0.7) 100%);
             padding: 15px;
-            z-index: 100;
+            z-index: 10000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
         
         .header h1 {
             color: #FFD700;
-            font-size: 20px;
+            font-size: 18px;
             text-align: center;
             margin: 0;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
@@ -62,13 +39,13 @@
         
         .header p {
             color: #FFF;
-            font-size: 12px;
+            font-size: 11px;
             text-align: center;
             margin: 5px 0 0 0;
         }
         
         .info-panel {
-            position: absolute;
+            position: fixed;
             bottom: 20px;
             left: 20px;
             right: 20px;
@@ -76,7 +53,7 @@
             border-radius: 15px;
             padding: 20px;
             color: white;
-            z-index: 100;
+            z-index: 10000;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             max-height: 40vh;
             overflow-y: auto;
@@ -85,62 +62,45 @@
         
         .info-panel h2 {
             color: #FFD700;
-            font-size: 18px;
+            font-size: 16px;
             margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
         
         .info-panel h3 {
             color: #FFD700;
-            font-size: 14px;
-            margin-top: 15px;
-            margin-bottom: 8px;
+            font-size: 13px;
+            margin-top: 12px;
+            margin-bottom: 6px;
         }
         
         .info-panel p {
-            font-size: 13px;
-            line-height: 1.6;
-            margin-bottom: 10px;
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 8px;
         }
         
         .info-panel ul {
-            margin-left: 20px;
-            font-size: 13px;
-            line-height: 1.8;
+            margin-left: 18px;
+            font-size: 12px;
+            line-height: 1.6;
         }
         
-        .hotspot {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background: rgba(255,215,0,0.9);
-            border: 2px solid white;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            animation: pulse 2s infinite;
-            box-shadow: 0 0 15px rgba(255,215,0,0.7);
-            z-index: 90;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+        .fact-box {
+            background: rgba(0,0,0,0.3);
+            padding: 8px;
+            border-radius: 6px;
+            margin: 8px 0;
+            border-left: 3px solid #FFD700;
         }
         
         .controls {
-            position: absolute;
-            top: 100px;
+            position: fixed;
+            top: 90px;
             right: 20px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            z-index: 100;
+            gap: 12px;
+            z-index: 10000;
         }
         
         .control-btn {
@@ -163,39 +123,36 @@
             transform: scale(0.95);
         }
         
-        .loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(139,69,19,0.95);
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            font-size: 16px;
-            z-index: 1000;
-            text-align: center;
-            border: 2px solid #FFD700;
-        }
-        
         .instruction {
-            position: absolute;
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(139,69,19,0.95);
+            background: rgba(139,69,19,0.98);
             color: white;
             padding: 25px;
             border-radius: 15px;
-            font-size: 15px;
-            z-index: 1000;
+            z-index: 20000;
             text-align: center;
-            border: 2px solid #FFD700;
-            max-width: 80%;
+            border: 3px solid #FFD700;
+            max-width: 85%;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.8);
+        }
+        
+        .instruction h2 {
+            color: #FFD700;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .instruction p {
+            font-size: 14px;
+            line-height: 1.8;
+            margin: 12px 0;
         }
         
         .instruction button {
-            margin-top: 15px;
+            margin-top: 20px;
             background: #FFD700;
             color: #8B4513;
             border: none;
@@ -204,324 +161,267 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         
-        .fact-box {
-            background: rgba(0,0,0,0.3);
+        .marker-image {
+            width: 150px;
+            height: 150px;
+            background: white;
+            border: 3px solid #FFD700;
+            border-radius: 10px;
+            margin: 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #8B4513;
             padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            border-left: 3px solid #FFD700;
+        }
+        
+        .download-marker {
+            display: inline-block;
+            background: #FFD700;
+            color: #8B4513;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        #arjs-video {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+        }
+        
+        a-scene {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <video id="video" autoplay playsinline></video>
-        <canvas id="canvas"></canvas>
+    <div class="header">
+        <h1>🏛️ AR MARKER - CANDI BOROBUDUR</h1>
+        <p>Arahkan kamera ke marker untuk melihat model 3D</p>
+    </div>
+    
+    <div class="instruction" id="instruction">
+        <h2>📱 Cara Menggunakan AR Marker</h2>
+        <p><strong>1. Download & Print Marker</strong></p>
+        <div class="marker-image">
+            📄 Marker Hiro<br>
+            (akan muncul setelah klik "Mulai")
+        </div>
+        <p><strong>2. Izinkan Akses Kamera</strong></p>
+        <p>Klik "Mulai AR" lalu izinkan akses kamera</p>
+        <p><strong>3. Arahkan ke Marker</strong></p>
+        <p>Scan marker yang sudah di-print, model Candi Borobudur akan muncul!</p>
+        <p style="font-size: 11px; color: #FFD700; margin-top: 15px;">
+            💡 Tip: Pastikan marker terlihat jelas di kamera dan ruangan cukup terang
+        </p>
+        <button onclick="startAR()">Mulai AR</button>
+        <br>
+        <a href="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png" download class="download-marker" target="_blank">
+            ⬇️ Download Marker
+        </a>
+    </div>
+    
+    <div class="controls" id="controls" style="display: none;">
+        <button class="control-btn" onclick="toggleInfo()" title="Info">📖</button>
+        <button class="control-btn" onclick="showMarkerHelp()" title="Help">❓</button>
+    </div>
+    
+    <div class="info-panel" id="infoPanel" style="display: none;">
+        <h2>🏛️ Candi Borobudur</h2>
         
-        <div class="header">
-            <h1>🏛️ CANDI BOROBUDUR</h1>
-            <p>Media Pembelajaran Sejarah - Dinasti Syailendra</p>
+        <div class="fact-box">
+            <h3>📅 Periode Pembangunan</h3>
+            <p>Dibangun sekitar tahun 780-840 Masehi pada masa Dinasti Syailendra di Kerajaan Mataram Kuno.</p>
         </div>
         
-        <div class="loading" id="loading">
-            <h2>⏳ Memuat Kamera...</h2>
-            <p style="margin-top: 10px;">Mohon izinkan akses kamera</p>
+        <div class="fact-box">
+            <h3>👑 Dinasti Syailendra</h3>
+            <p>Dinasti yang menguasai Jawa Tengah dan dikenal sebagai pelindung agama Buddha.</p>
         </div>
         
-        <div class="instruction" id="instruction" style="display: none;">
-            <h2>📱 Cara Menggunakan</h2>
-            <p style="margin: 15px 0;">1. Arahkan kamera ke permukaan datar</p>
-            <p style="margin: 15px 0;">2. Model Candi Borobudur akan muncul</p>
-            <p style="margin: 15px 0;">3. Gunakan 2 jari untuk zoom dan rotate</p>
-            <p style="margin: 15px 0;">4. Klik titik kuning (📍) untuk info detail</p>
-            <button onclick="startLearning()">Mulai Belajar</button>
+        <div class="fact-box">
+            <h3>🏗️ Arsitektur 9 Tingkat</h3>
+            <ul>
+                <li><strong>Kamadhatu:</strong> Tingkat dasar (dunia nafsu)</li>
+                <li><strong>Rupadhatu:</strong> Tingkat tengah (dunia bentuk)</li>
+                <li><strong>Arupadhatu:</strong> Tingkat atas (dunia tanpa bentuk)</li>
+            </ul>
         </div>
         
-        <div class="controls" id="controls" style="display: none;">
-            <button class="control-btn" onclick="resetView()" title="Reset View">🔄</button>
-            <button class="control-btn" onclick="toggleInfo()" title="Info">📖</button>
+        <div class="fact-box">
+            <h3>🎨 Relief & Stupa</h3>
+            <ul>
+                <li>2.672 panel relief cerita Buddha</li>
+                <li>504 arca Buddha</li>
+                <li>72 stupa berlubang</li>
+                <li>1 stupa utama (35 meter)</li>
+            </ul>
         </div>
         
-        <div class="info-panel" id="infoPanel" style="display: none;">
-            <h2>🏛️ Informasi Candi Borobudur</h2>
-            
-            <div class="fact-box">
-                <h3>📅 Periode Pembangunan</h3>
-                <p>Dibangun sekitar tahun 780-840 Masehi pada masa kejayaan Dinasti Syailendra di Kerajaan Mataram Kuno.</p>
-            </div>
-            
-            <div class="fact-box">
-                <h3>👑 Dinasti Syailendra</h3>
-                <p>Dinasti yang menguasai Jawa Tengah dan dikenal sebagai pelindung agama Buddha. Raja yang berkuasa saat pembangunan kemungkinan Samaratungga.</p>
-            </div>
-            
-            <div class="fact-box">
-                <h3>🏗️ Arsitektur</h3>
-                <p><strong>Struktur:</strong> 9 tingkat (6 persegi + 3 melingkar)</p>
-                <ul>
-                    <li><strong>Kamadhatu:</strong> Tingkat dasar (dunia nafsu)</li>
-                    <li><strong>Rupadhatu:</strong> Tingkat tengah (dunia bentuk)</li>
-                    <li><strong>Arupadhatu:</strong> Tingkat atas (dunia tanpa bentuk)</li>
-                </ul>
-            </div>
-            
-            <div class="fact-box">
-                <h3>🎨 Relief dan Stupa</h3>
-                <ul>
-                    <li>2.672 panel relief yang menceritakan kisah Buddha</li>
-                    <li>504 arca Buddha dalam berbagai mudra</li>
-                    <li>72 stupa berlubang dengan arca Buddha di dalamnya</li>
-                    <li>1 stupa utama di puncak (tinggi total 35 meter)</li>
-                </ul>
-            </div>
-            
-            <div class="fact-box">
-                <h3>📍 Lokasi & Status</h3>
-                <p><strong>Lokasi:</strong> Magelang, Jawa Tengah</p>
-                <p><strong>Status:</strong> Situs Warisan Dunia UNESCO sejak 1991</p>
-                <p><strong>Makna:</strong> "Vihara Buddha di Bukit" - pusat peziarahan Buddha terbesar di dunia</p>
-            </div>
-            
-            <div class="fact-box">
-                <h3>🔍 Fakta Menarik</h3>
-                <ul>
-                    <li>Menggunakan sistem interlock tanpa semen/perekat</li>
-                    <li>Ditemukan kembali oleh Sir Stamford Raffles tahun 1814</li>
-                    <li>Sempat terkubur abu vulkanik Gunung Merapi selama berabad-abad</li>
-                    <li>Dipugar besar-besaran oleh UNESCO tahun 1975-1982</li>
-                </ul>
-            </div>
+        <div class="fact-box">
+            <h3>📍 Status</h3>
+            <p><strong>Lokasi:</strong> Magelang, Jawa Tengah</p>
+            <p><strong>UNESCO:</strong> Situs Warisan Dunia sejak 1991</p>
+        </div>
+        
+        <div class="fact-box">
+            <h3>🔍 Fakta Menarik</h3>
+            <ul>
+                <li>Sistem interlock tanpa semen</li>
+                <li>Ditemukan Raffles (1814)</li>
+                <li>Sempat terkubur abu vulkanik</li>
+                <li>Dipugar UNESCO (1975-1982)</li>
+            </ul>
         </div>
     </div>
 
-    <script>
-        let scene, camera, renderer;
-        let video, canvas;
-        let candiModel;
-        let isDragging = false;
-        let previousTouch;
-        let rotationY = 0;
-        let scale = 1;
+    <!-- A-Frame Scene -->
+    <a-scene
+        embedded
+        arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+        vr-mode-ui="enabled: false"
+        id="arScene"
+        style="display: none;">
         
-        function init() {
-            video = document.getElementById('video');
-            canvas = document.getElementById('canvas');
+        <!-- Camera -->
+        <a-entity camera></a-entity>
+        
+        <!-- Marker -->
+        <a-marker preset="hiro" id="marker">
+            <!-- Container untuk model 3D kita -->
+            <a-entity id="candiContainer" position="0 0 0" scale="0.5 0.5 0.5">
+                <!-- Model 3D akan ditambahkan via JavaScript -->
+            </a-entity>
+        </a-marker>
+    </a-scene>
+
+    <script>
+        let markerDetected = false;
+        
+        function startAR() {
+            document.getElementById('instruction').style.display = 'none';
+            document.getElementById('arScene').style.display = 'block';
+            document.getElementById('controls').style.display = 'flex';
             
-            scene = new THREE.Scene();
+            // Wait for AR.js to initialize
+            setTimeout(() => {
+                createCandiBorobudur();
+                setupMarkerEvents();
+            }, 1000);
+        }
+        
+        function setupMarkerEvents() {
+            const marker = document.querySelector('#marker');
             
-            camera = new THREE.PerspectiveCamera(
-                75,
-                window.innerWidth / window.innerHeight,
-                0.1,
-                1000
-            );
-            camera.position.set(0, 1, 8);
-            camera.lookAt(0, 0, 0);
-            
-            renderer = new THREE.WebGLRenderer({
-                canvas: canvas,
-                alpha: true,
-                antialias: true
+            marker.addEventListener('markerFound', () => {
+                markerDetected = true;
+                console.log('Marker ditemukan!');
             });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setClearColor(0x000000, 0);
-            renderer.shadowMap.enabled = true;
             
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambientLight);
-            
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(5, 10, 7.5);
-            directionalLight.castShadow = true;
-            scene.add(directionalLight);
-            
-            const pointLight = new THREE.PointLight(0xffddaa, 0.5);
-            pointLight.position.set(-5, 5, 5);
-            scene.add(pointLight);
-            
-            createCandiBorobudur();
-            
-            startCamera();
-            
-            canvas.addEventListener('touchstart', onTouchStart);
-            canvas.addEventListener('touchmove', onTouchMove);
-            canvas.addEventListener('touchend', onTouchEnd);
-            canvas.addEventListener('mousedown', onMouseDown);
-            canvas.addEventListener('mousemove', onMouseMove);
-            canvas.addEventListener('mouseup', onMouseUp);
-            window.addEventListener('resize', onWindowResize);
-            
-            animate();
+            marker.addEventListener('markerLost', () => {
+                markerDetected = false;
+                console.log('Marker hilang!');
+            });
         }
         
         function createCandiBorobudur() {
-            candiModel = new THREE.Group();
+            const container = document.querySelector('#candiContainer');
+            const scene = document.querySelector('a-scene');
             
-            const stoneColor = 0x8B7355;
-            const darkStone = 0x5C4033;
-            
-            // Base levels (Kamadhatu)
+            // Create base levels
             for (let i = 0; i < 2; i++) {
-                const size = 6 - i * 0.5;
-                const geometry = new THREE.BoxGeometry(size, 0.3, size);
-                const material = new THREE.MeshPhongMaterial({ 
-                    color: i === 0 ? darkStone : stoneColor,
-                    shininess: 10
-                });
-                const base = new THREE.Mesh(geometry, material);
-                base.position.y = i * 0.3;
-                base.castShadow = true;
-                base.receiveShadow = true;
-                candiModel.add(base);
+                const size = 3 - i * 0.3;
+                const box = document.createElement('a-box');
+                box.setAttribute('width', size);
+                box.setAttribute('height', 0.2);
+                box.setAttribute('depth', size);
+                box.setAttribute('position', `0 ${i * 0.2} 0`);
+                box.setAttribute('color', i === 0 ? '#5C4033' : '#8B7355');
+                container.appendChild(box);
             }
             
-            // Middle levels (Rupadhatu) - Square terraces
+            // Middle square levels
             for (let i = 0; i < 5; i++) {
-                const size = 5 - i * 0.7;
-                const height = 0.8;
+                const size = 2.5 - i * 0.35;
+                const box = document.createElement('a-box');
+                box.setAttribute('width', size);
+                box.setAttribute('height', 0.4);
+                box.setAttribute('depth', size);
+                box.setAttribute('position', `0 ${0.4 + i * 0.45} 0`);
+                box.setAttribute('color', '#8B7355');
+                container.appendChild(box);
                 
-                // Main platform
-                const geometry = new THREE.BoxGeometry(size, height, size);
-                const material = new THREE.MeshPhongMaterial({ 
-                    color: stoneColor,
-                    shininess: 15
-                });
-                const terrace = new THREE.Mesh(geometry, material);
-                terrace.position.y = 0.6 + i * 0.9;
-                terrace.castShadow = true;
-                terrace.receiveShadow = true;
-                candiModel.add(terrace);
-                
-                // Add small stupas on each level
+                // Add small stupas
                 const numStupas = 8 - i;
                 for (let j = 0; j < numStupas; j++) {
                     const angle = (j / numStupas) * Math.PI * 2;
                     const radius = size * 0.35;
-                    const stupaGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.4, 8);
-                    const stupaMat = new THREE.MeshPhongMaterial({ color: 0xA0826D });
-                    const stupa = new THREE.Mesh(stupaGeo, stupaMat);
-                    stupa.position.set(
-                        Math.cos(angle) * radius,
-                        0.6 + i * 0.9 + 0.6,
-                        Math.sin(angle) * radius
-                    );
-                    stupa.castShadow = true;
-                    candiModel.add(stupa);
+                    const stupa = document.createElement('a-cylinder');
+                    stupa.setAttribute('radius', 0.08);
+                    stupa.setAttribute('height', 0.2);
+                    stupa.setAttribute('position', `${Math.cos(angle) * radius} ${0.4 + i * 0.45 + 0.3} ${Math.sin(angle) * radius}`);
+                    stupa.setAttribute('color', '#A0826D');
+                    container.appendChild(stupa);
                 }
             }
             
-            // Top circular levels (Arupadhatu)
+            // Top circular levels
             for (let i = 0; i < 3; i++) {
-                const radius = 1.8 - i * 0.5;
-                const geometry = new THREE.CylinderGeometry(radius, radius, 0.3, 32);
-                const material = new THREE.MeshPhongMaterial({ 
-                    color: stoneColor,
-                    shininess: 20
-                });
-                const circular = new THREE.Mesh(geometry, material);
-                circular.position.y = 5.1 + i * 0.5;
-                circular.castShadow = true;
-                circular.receiveShadow = true;
-                candiModel.add(circular);
+                const radius = 0.9 - i * 0.25;
+                const cylinder = document.createElement('a-cylinder');
+                cylinder.setAttribute('radius', radius);
+                cylinder.setAttribute('height', 0.15);
+                cylinder.setAttribute('position', `0 ${2.6 + i * 0.25} 0`);
+                cylinder.setAttribute('color', '#8B7355');
+                container.appendChild(cylinder);
                 
                 // Add perforated stupas
-                const numStupas = (3 - i) * 8;
+                const numStupas = (3 - i) * 6;
                 for (let j = 0; j < numStupas; j++) {
                     const angle = (j / numStupas) * Math.PI * 2;
                     const r = radius * 0.6;
-                    const stupaGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.35, 8);
-                    const stupaMat = new THREE.MeshPhongMaterial({ color: 0xA0826D });
-                    const stupa = new THREE.Mesh(stupaGeo, stupaMat);
-                    stupa.position.set(
-                        Math.cos(angle) * r,
-                        5.1 + i * 0.5 + 0.25,
-                        Math.sin(angle) * r
-                    );
-                    stupa.castShadow = true;
-                    candiModel.add(stupa);
+                    const stupa = document.createElement('a-cylinder');
+                    stupa.setAttribute('radius', 0.06);
+                    stupa.setAttribute('height', 0.18);
+                    stupa.setAttribute('position', `${Math.cos(angle) * r} ${2.6 + i * 0.25 + 0.15} ${Math.sin(angle) * r}`);
+                    stupa.setAttribute('color', '#A0826D');
+                    container.appendChild(stupa);
                 }
             }
             
             // Main central stupa
-            const mainStupaGeo = new THREE.CylinderGeometry(0.6, 0.8, 1.2, 32);
-            const mainStupaMat = new THREE.MeshPhongMaterial({ 
-                color: 0x9B8B7E,
-                shininess: 30
-            });
-            const mainStupa = new THREE.Mesh(mainStupaGeo, mainStupaMat);
-            mainStupa.position.y = 7.2;
-            mainStupa.castShadow = true;
-            candiModel.add(mainStupa);
+            const mainStupa = document.createElement('a-cylinder');
+            mainStupa.setAttribute('radius-top', 0.3);
+            mainStupa.setAttribute('radius-bottom', 0.4);
+            mainStupa.setAttribute('height', 0.6);
+            mainStupa.setAttribute('position', '0 3.6 0');
+            mainStupa.setAttribute('color', '#9B8B7E');
+            container.appendChild(mainStupa);
             
-            // Top of main stupa
-            const topGeo = new THREE.SphereGeometry(0.4, 16, 16);
-            const topMat = new THREE.MeshPhongMaterial({ color: 0xB8A892 });
-            const top = new THREE.Mesh(topGeo, topMat);
-            top.position.y = 7.9;
-            top.castShadow = true;
-            candiModel.add(top);
+            // Top sphere
+            const top = document.createElement('a-sphere');
+            top.setAttribute('radius', 0.2);
+            top.setAttribute('position', '0 4.0 0');
+            top.setAttribute('color', '#B8A892');
+            container.appendChild(top);
             
-            candiModel.position.y = 0;
-            candiModel.scale.set(0.6, 0.6, 0.6);
-            
-            scene.add(candiModel);
-        }
-        
-        async function startCamera() {
-            const loadingEl = document.getElementById('loading');
-            
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                loadingEl.innerHTML = '❌ Browser tidak support kamera.<br>Gunakan Chrome/Safari terbaru.';
-                loadingEl.style.background = 'rgba(139, 69, 19, 0.95)';
-                return;
-            }
-            
-            try {
-                loadingEl.textContent = '⏳ Meminta izin kamera...';
-                
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { 
-                        facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    }
-                });
-                
-                loadingEl.textContent = '⏳ Menghubungkan kamera...';
-                
-                video.srcObject = stream;
-                await video.play();
-                
-                loadingEl.style.display = 'none';
-                document.getElementById('instruction').style.display = 'block';
-                
-            } catch (err) {
-                console.error('Error accessing camera:', err);
-                
-                let errorMsg = '❌ Gagal akses kamera!<br><br>';
-                
-                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-                    errorMsg += '<strong>Izin ditolak!</strong><br>Refresh halaman dan izinkan akses kamera.';
-                } else if (err.name === 'NotFoundError') {
-                    errorMsg += 'Kamera tidak ditemukan.';
-                } else if (err.name === 'NotReadableError') {
-                    errorMsg += 'Kamera sedang dipakai aplikasi lain.';
-                } else {
-                    errorMsg += `Error: ${err.message}`;
-                }
-                
-                errorMsg += '<br><br><button onclick="location.reload()" style="padding:10px 20px; background:#FFD700; color:#8B4513; border:none; border-radius:5px; cursor:pointer;">🔄 Coba Lagi</button>';
-                
-                loadingEl.innerHTML = errorMsg;
-            }
-        }
-        
-        function startLearning() {
-            document.getElementById('instruction').style.display = 'none';
-            document.getElementById('controls').style.display = 'flex';
-            toggleInfo();
+            // Add rotation animation
+            container.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear');
         }
         
         function toggleInfo() {
@@ -529,80 +429,9 @@
             panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
         }
         
-        function resetView() {
-            rotationY = 0;
-            scale = 1;
-            candiModel.rotation.y = 0;
-            candiModel.scale.set(0.4, 0.4, 0.4);
+        function showMarkerHelp() {
+            alert('💡 TIPS MENGGUNAKAN MARKER:\n\n1. Pastikan marker terlihat jelas di kamera\n2. Jaga jarak 20-50 cm dari marker\n3. Ruangan harus cukup terang\n4. Jangan tutup sebagian marker\n5. Marker harus rata (tidak bengkok)\n\n📥 Download marker di: https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png');
         }
-        
-        function onTouchStart(e) {
-            if (e.touches.length === 1) {
-                isDragging = true;
-                previousTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-            }
-        }
-        
-        function onTouchMove(e) {
-            e.preventDefault();
-            
-            if (e.touches.length === 1 && isDragging) {
-                const deltaX = e.touches[0].clientX - previousTouch.x;
-                rotationY += deltaX * 0.01;
-                candiModel.rotation.y = rotationY;
-                previousTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-            } else if (e.touches.length === 2) {
-                const dx = e.touches[0].clientX - e.touches[1].clientX;
-                const dy = e.touches[0].clientY - e.touches[1].clientY;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                if (!this.lastDistance) {
-                    this.lastDistance = distance;
-                } else {
-                    const delta = distance - this.lastDistance;
-                    scale += delta * 0.001;
-                    scale = Math.max(0.2, Math.min(1, scale));
-                    candiModel.scale.set(scale * 0.4, scale * 0.4, scale * 0.4);
-                    this.lastDistance = distance;
-                }
-            }
-        }
-        
-        function onTouchEnd(e) {
-            isDragging = false;
-            this.lastDistance = null;
-        }
-        
-        function onMouseDown(e) {
-            isDragging = true;
-            previousTouch = { x: e.clientX, y: e.clientY };
-        }
-        
-        function onMouseMove(e) {
-            if (isDragging) {
-                const deltaX = e.clientX - previousTouch.x;
-                rotationY += deltaX * 0.01;
-                candiModel.rotation.y = rotationY;
-                previousTouch = { x: e.clientX, y: e.clientY };
-            }
-        }
-        
-        function onMouseUp() {
-            isDragging = false;
-        }
-        
-        function animate() {
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
-        }
-        
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-        
-        window.addEventListener('load', init);
     </script>
 </body>
 </html>
