@@ -309,9 +309,9 @@
         <a-entity camera></a-entity>
         
         <!-- Marker -->
-        <a-marker preset="hiro" id="marker">
+        <a-marker preset="hiro" id="marker" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5">
             <!-- Container untuk model 3D kita -->
-            <a-entity id="candiContainer" position="0 0 0" scale="0.5 0.5 0.5">
+            <a-entity id="candiContainer" position="0 0.5 0" scale="0.8 0.8 0.8">
                 <!-- Model 3D akan ditambahkan via JavaScript -->
             </a-entity>
         </a-marker>
@@ -320,6 +320,9 @@
     <script>
         let markerDetected = false;
         let arStarted = false;
+        let currentScale = 0.8;
+        let currentRotation = 0;
+        let candiContainer = null;
         
         // Pastikan library loaded
         window.addEventListener('load', function() {
@@ -351,11 +354,44 @@
             if (arScene) arScene.style.display = 'block';
             if (controls) controls.style.display = 'flex';
             
+            // Show info panel by default
+            setTimeout(() => {
+                toggleInfo();
+            }, 1000);
+            
             // Wait for AR.js to initialize
             setTimeout(() => {
                 createCandiBorobudur();
                 setupMarkerEvents();
             }, 1500);
+        }
+        
+        function scaleUp() {
+            if (!candiContainer) candiContainer = document.querySelector('#candiContainer');
+            if (candiContainer) {
+                currentScale = Math.min(currentScale + 0.1, 2.0);
+                candiContainer.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
+                console.log('Scale up:', currentScale);
+            }
+        }
+        
+        function scaleDown() {
+            if (!candiContainer) candiContainer = document.querySelector('#candiContainer');
+            if (candiContainer) {
+                currentScale = Math.max(currentScale - 0.1, 0.3);
+                candiContainer.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
+                console.log('Scale down:', currentScale);
+            }
+        }
+        
+        function rotateModel() {
+            if (!candiContainer) candiContainer = document.querySelector('#candiContainer');
+            if (candiContainer) {
+                currentRotation += 45;
+                if (currentRotation >= 360) currentRotation = 0;
+                candiContainer.setAttribute('rotation', `0 ${currentRotation} 0`);
+                console.log('Rotate:', currentRotation);
+            }
         }
         
         function setupMarkerEvents() {
@@ -453,8 +489,11 @@
             top.setAttribute('color', '#B8A892');
             container.appendChild(top);
             
-            // Add rotation animation
-            container.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear');
+            // Add rotation animation - REMOVED for stability
+            // container.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear');
+            
+            // Save reference
+            candiContainer = container;
         }
         
         function toggleInfo() {
