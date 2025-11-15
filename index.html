@@ -1,198 +1,193 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Brahma</title>
+    <meta charset="utf-8">
+    <title>AR 6 Sisi dengan Materi</title>
 
-    <!-- A-FRAME + AR.js -->
+    <!-- FIX MOBILE ZOOM -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.3.2/aframe/build/aframe-ar.js"></script>
 
     <style>
-        body { margin:0; overflow:hidden; font-family: Arial; }
-
-        /* --- TOMBOL KONTROL MODEL --- */
-        .controls {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 10;
-        }
-        .control-btn {
-            background: rgba(0,0,0,0.65);
-            color: #fff;
-            border: 2px solid #FFD700;
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            font-size: 22px;
-            cursor: pointer;
-            backdrop-filter: blur(3px);
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            touch-action: none; /* extra anti zoom */
         }
 
-        /* --- TOMBOL OPEN MATERI --- */
         #openMateriBtn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #1976d2;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 14px;
-            z-index: 999;
-            cursor: pointer;
-            display: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: #ffffffcc;
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 2px solid black;
+            font-weight: bold;
+            z-index: 10000;
         }
 
-        /* --- PANEL MATERI --- */
-        #materiBox {
-            position: absolute;
-            bottom: 20px;
+        #materiPanel {
+            position: fixed;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            width: 92%;
-            max-width: 650px;
-            background: rgba(255,255,255,0.97);
+            transform: translate(-50%, -50%);
+            width: 85%;
+            background: #fff;
             padding: 20px;
-            border-radius: 14px;
-            box-shadow: 0 6px 25px rgba(0,0,0,0.4);
+            border-radius: 15px;
+            border: 2px solid black;
             display: none;
-            z-index: 1000;
-            overflow-y: auto;
-            max-height: 70%;
-            animation: fadeIn 0.35s ease;
+            z-index: 10000;
         }
 
         #closeMateriBtn {
-            background: #e53935;
-            color: white;
-            border: none;
-            padding: 10px 16px;
+            margin-top: 15px;
+            padding: 10px;
+            background: #ddd;
             border-radius: 10px;
-            cursor: pointer;
-            float: right;
-            margin-top: -10px;
-            margin-right: -10px;
+            width: 100%;
+            text-align: center;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translate(-50%, 10px); }
-            to   { opacity: 1; transform: translate(-50%, 0); }
+        /* Tombol control AR di bawah */
+        #controls {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 9999;
         }
-
-        h2 { margin-top: 0; }
+        .ctrl-btn {
+            padding: 10px 14px;
+            background: #ffffffcc;
+            border-radius: 10px;
+            border: 2px solid black;
+            font-size: 14px;
+            font-weight: bold;
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- TOMBOL KONTROL MODEL -->
-    <div class="controls">
-        <button class="control-btn" onclick="zoomIn()">+</button>
-        <button class="control-btn" onclick="zoomOut()">−</button>
-        <button class="control-btn" onclick="rotateLeft()">↶</button>
-        <button class="control-btn" onclick="rotateRight()">↷</button>
-        <button class="control-btn" onclick="resetView()">🔄</button>
-    </div>
+<!-- ===================== ANTI ZOOM SCRIPT ===================== -->
+<script>
+document.addEventListener('touchmove', function(event) {
+    if (event.scale !== 1) { event.preventDefault(); }
+}, { passive: false });
 
-    <!-- TOMBOL OPEN MATERI -->
-    <button id="openMateriBtn">Open Materi</button>
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function(event) {
+    const now = new Date().getTime();
+    if (now - lastTouchEnd <= 300) { event.preventDefault(); }
+    lastTouchEnd = now;
+}, false);
 
-    <!-- PANEL MATERI -->
-    <div id="materiBox">
-        <button id="closeMateriBtn">Close</button>
-        <h2>🐚 Dewa Brahma – Sang Pencipta Alam Semesta</h2>
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('gesturechange', e => e.preventDefault());
+document.addEventListener('gestureend', e => e.preventDefault());
+</script>
+<!-- ============================================================ -->
 
-        <p>Dewa Brahma adalah salah satu bagian terpenting dari <b>Trimurti</b> dalam agama Hindu, bersama Wisnu (pemelihara) dan Siwa (pelebur). Ia digambarkan sebagai sosok yang menciptakan seluruh isi jagat raya—dari para dewa, manusia, hingga alam semesta.</p>
+<button id="openMateriBtn">Open Materi</button>
 
-        <p>Brahma memiliki <b>empat wajah</b> yang mengarah ke segala penjuru. Ini melambangkan keluasan ilmu pengetahuan dan penguasaan empat Veda. Ia juga memiliki empat tangan yang membawa:</p>
+<div id="materiPanel">
+    <h3>Materi Brahma</h3>
+    <p>
+        Brahma adalah dewa pencipta dalam agama Hindu. Ia sering digambarkan memiliki empat wajah 
+        yang menghadap ke empat penjuru mata angin.
+    </p>
+    <div id="closeMateriBtn">Tutup</div>
+</div>
 
-        <ul>
-            <li>🌸 <b>Bunga teratai</b> – lambang kelahiran dan kesucian</li>
-            <li>📿 <b>Mala (tasbih)</b> – simbol waktu dan mantra suci</li>
-            <li>📜 <b>Kitab Veda</b> – pengetahuan dan hukum semesta</li>
-            <li>✋ <b>Mudra perlindungan & berkah</b></li>
-        </ul>
+<!-- ===================== AR SCENE ===================== -->
+<a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
 
-        <p>Walaupun pemujaannya tidak sebesar Wisnu atau Siwa, Brahma tetap menjadi simbol bahwa segala sesuatu di alam semesta memiliki awal dan proses penciptaan.</p>
+    <a-marker type="pattern" url="marker.patt">
+        <a-box id="modelBox"
+            depth="1" height="1" width="1"
+            position="0 0.5 0">
 
-        <p>Dalam filsafat Hindu, Brahma adalah bentuk <b>Saguna Brahman</b> – Tuhan yang dipersonifikasikan agar dapat dipahami manusia. Sementara hakikat Tuhan sendiri adalah <b>Nirguna Brahman</b>, yaitu tanpa bentuk dan tak terpikirkan.</p>
+            <!-- sisi depan -->
+            <a-plane position="0 0.5 0.501" rotation="0 0 0" width="1" height="1"
+                     src="images/Brahmadepan.png"></a-plane>
 
-        <p>Kutipan Bhagavad Gita menjelaskan:</p>
-        <blockquote>
-            “Dia tidak dapat diwujudkan dengan kata-kata, tidak dapat dipikirkan, tak berubah.”
-        </blockquote>
+            <!-- sisi belakang -->
+            <a-plane position="0 0.5 -0.501" rotation="0 180 0" width="1" height="1"
+                     src="images/Brahmabelakang.png"></a-plane>
 
-        <p>Dengan memahami Brahma, kita mempelajari bukan hanya siapa pencipta alam ini, tetapi juga bagaimana penciptaan dipandang dalam sudut spiritual dan filosofis Hindu.</p>
-    </div>
+            <!-- kiri -->
+            <a-plane position="-0.501 0.5 0" rotation="0 90 0" width="1" height="1"
+                     src="images/Brahmakiri.png"></a-plane>
 
-    <!-- AR SCENE -->
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false">
+            <!-- kanan -->
+            <a-plane position="0.501 0.5 0" rotation="0 -90 0" width="1" height="1"
+                     src="images/Brahmakanan.png"></a-plane>
 
-        <a-marker id="markerBrahma" preset="hiro">
+            <!-- atas -->
+            <a-plane position="0 1.001 0" rotation="-90 0 0" width="1" height="1"
+                     src="images/atas.png"></a-plane>
 
-            <!-- KUBUS 6 SISI -->
-            <a-box id="brahma-model"
-                   position="0 0.5 0"
-                   scale="0.5 0.5 0.5"
-                   material="src: #front;">
-            </a-box>
+            <!-- bawah -->
+            <a-plane position="0 0.001 0" rotation="90 0 0" width="1" height="1"
+                     src="images/bawah.png"></a-plane>
 
-        </a-marker>
+        </a-box>
+    </a-marker>
 
-        <a-entity camera></a-entity>
+    <a-entity camera></a-entity>
+</a-scene>
+<!-- ===================================================== -->
 
-    </a-scene>
+<!-- ===================== CONTROL BUTTONS ====================== -->
+<div id="controls">
+    <button class="ctrl-btn" onclick="rotateModel()">Rotate</button>
+    <button class="ctrl-btn" onclick="zoomIn()">Zoom +</button>
+    <button class="ctrl-btn" onclick="zoomOut()">Zoom -</button>
+    <button class="ctrl-btn" onclick="resetModel()">Reset</button>
+</div>
 
-    <!-- GAMBAR UNTUK 6 SISI -->
-    <img id="front"  src="https://raw.githubusercontent.com/Siberyanhusky/Ar-Tester/main/images/Brahmadepan.png" style="display:none;">
-    <img id="back"   src="https://raw.githubusercontent.com/Siberyanhusky/Ar-Tester/main/images/Brahmabelakang.png" style="display:none;">
-    <img id="left"   src="https://raw.githubusercontent.com/Siberyanhusky/Ar-Tester/main/images/Brahmakiri.png" style="display:none;">
-    <img id="right"  src="https://raw.githubusercontent.com/Siberyanhusky/Ar-Tester/main/images/Brahmakanan.png" style="display:none;">
-    <img id="top"    src="https://raw.githubusercontent.com/Siberyanhusky/Ar-Tester/main/images/Brahmadepan.png" style="display:none;">
-    <img id="bottom" src="https://raw.githubusercontent.com/Siberyanhusky/Ar-Tester/main/images/Brahmadepan.png" style="display:none;">
+<script>
+let box = null;
 
-    <script>
-        let modelScale = 0.5;
-        let modelRotation = 0;
+window.onload = () => {
+    box = document.querySelector("#modelBox");
+};
 
-        function updateModel() {
-            const model = document.getElementById('brahma-model');
-            model.setAttribute('scale', `${modelScale} ${modelScale} ${modelScale}`);
-            model.setAttribute('rotation', `0 ${modelRotation} 0`);
-        }
+function rotateModel() {
+    let r = box.getAttribute("rotation");
+    box.setAttribute("rotation", { x: r.x, y: r.y + 10, z: r.z });
+}
 
-        function zoomIn() { modelScale += 0.1; updateModel(); }
-        function zoomOut() { modelScale = Math.max(0.2, modelScale - 0.1); updateModel(); }
-        function rotateLeft() { modelRotation -= 20; updateModel(); }
-        function rotateRight() { modelRotation += 20; updateModel(); }
-        function resetView() { modelScale = 0.5; modelRotation = 0; updateModel(); }
+function zoomIn() {
+    let s = box.getAttribute("scale");
+    box.setAttribute("scale", { x: s.x + 0.1, y: s.y + 0.1, z: s.z + 0.1 });
+}
 
-        // MATERI PANEL
-        const marker = document.querySelector("#markerBrahma");
-        const openBtn = document.getElementById("openMateriBtn");
-        const materi = document.getElementById("materiBox");
-        const closeBtn = document.getElementById("closeMateriBtn");
+function zoomOut() {
+    let s = box.getAttribute("scale");
+    box.setAttribute("scale", { x: s.x - 0.1, y: s.y - 0.1, z: s.z - 0.1 });
+}
 
-        marker.addEventListener("markerFound", () => {
-            openBtn.style.display = "block";
-        });
+function resetModel() {
+    box.setAttribute("rotation", { x: 0, y: 0, z: 0 });
+    box.setAttribute("scale", { x: 1, y: 1, z: 1 });
+}
 
-        openBtn.addEventListener("click", () => {
-            materi.style.display = "block";
-        });
-
-        closeBtn.addEventListener("click", () => {
-            materi.style.display = "none";
-        });
-    </script>
+// Panel Materi
+document.getElementById("openMateriBtn").onclick = () => {
+    document.getElementById("materiPanel").style.display = "block";
+};
+document.getElementById("closeMateriBtn").onclick = () => {
+    document.getElementById("materiPanel").style.display = "none";
+};
+</script>
 
 </body>
 </html>
