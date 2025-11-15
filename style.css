@@ -1,1 +1,53 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    touch-action: none;
+}
+
+/* Tombol Materi */
+#openMateriBtn {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    padding: 10px 15px;
+    background: #ffffffcc;
+    border-radius: 10px;
+    border: 2px solid black;
+    font-weight: bold;
+    display: none;
+    z-index: 9999;
+}
+
+/* Panel Materi */
+#materiPanel {
+    position: fixed;
+    width: 90%;
+    left: 5%;
+    top: 10%;
+    background: white;
+    padding: 20px;
+    border: 2px solid black;
+    border-radius: 15px;
+    display: none;
+    z-index: 10000;
+}
+
+/* Kontrol Zoom/Rotate */
+#controls {
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    gap: 10px;
+    z-index: 9999;
+}
+
+.ctrl-btn {
+    padding: 10px 15px;
+    background: #ffffffcc;
+    border-radius: 8px;
+    border: 2px solid black;
+    font-weight: bold;
+}
 
