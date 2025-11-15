@@ -2,15 +2,14 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>AR Brahma Final Fix</title>
+    <title>AR Brahma Final</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- A-Frame + AR.js -->
+    <!-- A-Frame & AR.js -->
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.3.2/aframe/build/aframe-ar.js"></script>
 
-    <!-- STYLE -->
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -22,8 +21,8 @@
 <div id="materiPanel">
     <h3>Brahma — Dewa Pencipta</h3>
     <p>
-        Brahma adalah salah satu Trimurti dalam Hindu: Brahma (pencipta), Wisnu (pemelihara),
-        dan Siwa (pelebur). Brahma memiliki empat wajah yang melambangkan pengetahuan tanpa batas.
+        Brahma adalah salah satu Trimurti: Brahma (pencipta), Wisnu (pemelihara), dan Siwa (pelebur).
+        Brahma memiliki empat wajah yang melambangkan pengetahuan tanpa batas.
     </p>
     <button onclick="closeMateri()" class="ctrl-btn" style="width:100%;">Tutup</button>
 </div>
@@ -39,24 +38,24 @@
 <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
 
     <a-marker id="markerBrahma" type="pattern"
-        url="marker.patt">
+        url="https://siberyanhusky.github.io/Ar-Tester/marker.patt">
 
         <a-entity id="brahmaModel" position="0 0 0" scale="1 1 1">
 
             <!-- DEPAN -->
-            <a-plane src="images/Brahmadepan.png"
+            <a-plane src="https://siberyanhusky.github.io/Ar-Tester/images/Brahmadepan.png"
                      position="0 0 0.5" rotation="0 0 0" width="1" height="1"></a-plane>
 
             <!-- BELAKANG -->
-            <a-plane src="images/Brahmabelakang.png"
+            <a-plane src="https://siberyanhusky.github.io/Ar-Tester/images/Brahmabelakang.png"
                      position="0 0 -0.5" rotation="0 180 0" width="1" height="1"></a-plane>
 
             <!-- KIRI -->
-            <a-plane src="images/Brahmakiri.png"
+            <a-plane src="https://siberyanhusky.github.io/Ar-Tester/images/Brahmakiri.png"
                      position="-0.5 0 0" rotation="0 90 0" width="1" height="1"></a-plane>
 
             <!-- KANAN -->
-            <a-plane src="images/Brahmakanan.png"
+            <a-plane src="https://siberyanhusky.github.io/Ar-Tester/images/Brahmakanan.png"
                      position="0.5 0 0" rotation="0 -90 0" width="1" height="1"></a-plane>
 
         </a-entity>
@@ -67,7 +66,6 @@
 
 </a-scene>
 
-<!-- SCRIPT -->
 <script src="script.js"></script>
 
 </body>
