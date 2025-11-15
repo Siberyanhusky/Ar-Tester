@@ -2,15 +2,16 @@ body {
     margin: 0;
     overflow: hidden;
     touch-action: none;
+    font-family: Arial, sans-serif;
 }
 
-/* Tombol Materi */
+/* Tombol open materi */
 #openMateriBtn {
     position: fixed;
     top: 15px;
     right: 15px;
     padding: 10px 15px;
-    background: #ffffffcc;
+    background: #ffffffdd;
     border-radius: 10px;
     border: 2px solid black;
     font-weight: bold;
@@ -18,7 +19,7 @@ body {
     z-index: 9999;
 }
 
-/* Panel Materi */
+/* Panel materi */
 #materiPanel {
     position: fixed;
     width: 90%;
@@ -32,7 +33,7 @@ body {
     z-index: 10000;
 }
 
-/* Kontrol Zoom/Rotate */
+/* Kontrol model */
 #controls {
     position: fixed;
     bottom: 15px;
@@ -50,4 +51,3 @@ body {
     border: 2px solid black;
     font-weight: bold;
 }
-
