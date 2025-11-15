@@ -1,74 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <meta charset="utf-8">
-    <title>AR 6 Sisi dengan Materi</title>
+    <meta charset="UTF-8">
+    <title>AR Brahma Fix</title>
 
-    <!-- FIX MOBILE ZOOM -->
+    <!-- Anti zoom browser -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.3.2/aframe/build/aframe-ar.js"></script>
 
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            touch-action: none; /* extra anti zoom */
-        }
+        body { margin:0; overflow:hidden; touch-action:none; }
 
+        /* Tombol Open Materi */
         #openMateriBtn {
             position: fixed;
             top: 15px;
             right: 15px;
-            background: #ffffffcc;
             padding: 10px 15px;
+            background: #ffffffcc;
             border-radius: 10px;
             border: 2px solid black;
             font-weight: bold;
-            z-index: 10000;
+            display: none;  /* HANYA tampil setelah marker terdeteksi */
+            z-index: 9999;
         }
 
+        /* Panel Materi */
         #materiPanel {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 85%;
-            background: #fff;
+            width: 90%;
+            left: 5%;
+            top: 10%;
+            background: white;
             padding: 20px;
-            border-radius: 15px;
             border: 2px solid black;
+            border-radius: 15px;
             display: none;
             z-index: 10000;
         }
 
-        #closeMateriBtn {
-            margin-top: 15px;
-            padding: 10px;
-            background: #ddd;
-            border-radius: 10px;
-            width: 100%;
-            text-align: center;
-        }
-
-        /* Tombol control AR di bawah */
         #controls {
             position: fixed;
-            bottom: 10px;
+            bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
-            display: flex;
+            display: none; /* tampil saat marker terdeteksi */
             gap: 10px;
             z-index: 9999;
         }
+
         .ctrl-btn {
-            padding: 10px 14px;
+            padding: 10px 15px;
             background: #ffffffcc;
-            border-radius: 10px;
+            border-radius: 8px;
             border: 2px solid black;
-            font-size: 14px;
             font-weight: bold;
         }
     </style>
@@ -76,116 +63,121 @@
 
 <body>
 
-<!-- ===================== ANTI ZOOM SCRIPT ===================== -->
-<script>
-document.addEventListener('touchmove', function(event) {
-    if (event.scale !== 1) { event.preventDefault(); }
-}, { passive: false });
-
-let lastTouchEnd = 0;
-document.addEventListener('touchend', function(event) {
-    const now = new Date().getTime();
-    if (now - lastTouchEnd <= 300) { event.preventDefault(); }
-    lastTouchEnd = now;
-}, false);
-
-document.addEventListener('gesturestart', e => e.preventDefault());
-document.addEventListener('gesturechange', e => e.preventDefault());
-document.addEventListener('gestureend', e => e.preventDefault());
-</script>
-<!-- ============================================================ -->
-
-<button id="openMateriBtn">Open Materi</button>
+<!-- UI -->
+<button id="openMateriBtn">Materi</button>
 
 <div id="materiPanel">
-    <h3>Materi Brahma</h3>
+    <h3>Brahma — Dewa Pencipta</h3>
     <p>
-        Brahma adalah dewa pencipta dalam agama Hindu. Ia sering digambarkan memiliki empat wajah 
-        yang menghadap ke empat penjuru mata angin.
+        Brahma merupakan salah satu dari Trimurti dalam agama Hindu, yaitu Brahma, Wisnu,
+        dan Siwa. Brahma berperan sebagai Dewa Pencipta alam semesta. Digambarkan memiliki
+        empat wajah yang mengarah ke empat penjuru mata angin, melambangkan pengetahuan
+        yang luas tanpa batas. Setiap wajahnya dipercaya membaca satu kitab Weda.
+        Brahma juga duduk di atas padma (teratai) yang melambangkan kesucian.
     </p>
-    <div id="closeMateriBtn">Tutup</div>
+
+    <button onclick="closeMateri()" class="ctrl-btn" style="width:100%;">Tutup</button>
 </div>
 
-<!-- ===================== AR SCENE ===================== -->
-<a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-
-    <a-marker type="pattern" url="marker.patt">
-        <a-box id="modelBox"
-            depth="1" height="1" width="1"
-            position="0 0.5 0">
-
-            <!-- sisi depan -->
-            <a-plane position="0 0.5 0.501" rotation="0 0 0" width="1" height="1"
-                     src="images/Brahmadepan.png"></a-plane>
-
-            <!-- sisi belakang -->
-            <a-plane position="0 0.5 -0.501" rotation="0 180 0" width="1" height="1"
-                     src="images/Brahmabelakang.png"></a-plane>
-
-            <!-- kiri -->
-            <a-plane position="-0.501 0.5 0" rotation="0 90 0" width="1" height="1"
-                     src="images/Brahmakiri.png"></a-plane>
-
-            <!-- kanan -->
-            <a-plane position="0.501 0.5 0" rotation="0 -90 0" width="1" height="1"
-                     src="images/Brahmakanan.png"></a-plane>
-
-            <!-- atas -->
-            <a-plane position="0 1.001 0" rotation="-90 0 0" width="1" height="1"
-                     src="images/atas.png"></a-plane>
-
-            <!-- bawah -->
-            <a-plane position="0 0.001 0" rotation="90 0 0" width="1" height="1"
-                     src="images/bawah.png"></a-plane>
-
-        </a-box>
-    </a-marker>
-
-    <a-entity camera></a-entity>
-</a-scene>
-<!-- ===================================================== -->
-
-<!-- ===================== CONTROL BUTTONS ====================== -->
 <div id="controls">
-    <button class="ctrl-btn" onclick="rotateModel()">Rotate</button>
     <button class="ctrl-btn" onclick="zoomIn()">Zoom +</button>
     <button class="ctrl-btn" onclick="zoomOut()">Zoom -</button>
+    <button class="ctrl-btn" onclick="rotate()">Rotate</button>
     <button class="ctrl-btn" onclick="resetModel()">Reset</button>
 </div>
 
+<!-- ===================================================== -->
+<!-- ==============     AR SCENE      ==================== -->
+<!-- ===================================================== -->
+<a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+
+    <a-marker id="markerBrahma" type="pattern" url="marker.patt">
+
+        <!-- Model 6 sisi dibangun dari 6 plane -->
+        <a-entity id="brahmaModel" position="0 0 0" scale="1 1 1">
+
+            <!-- DEPAN -->
+            <a-plane src="https://raw.githubusercontent.com/YOUR_USERNAME/Ar-Tester/main/images/Brahmadepan.png"
+                     position="0 0.5 0.5" rotation="0 0 0" width="1" height="1"></a-plane>
+
+            <!-- BELAKANG -->
+            <a-plane src="https://raw.githubusercontent.com/YOUR_USERNAME/Ar-Tester/main/images/Brahmabelakang.png"
+                     position="0 0.5 -0.5" rotation="0 180 0" width="1" height="1"></a-plane>
+
+            <!-- KIRI -->
+            <a-plane src="https://raw.githubusercontent.com/YOUR_USERNAME/Ar-Tester/main/images/Brahmakiri.png"
+                     position="-0.5 0.5 0" rotation="0 90 0" width="1" height="1"></a-plane>
+
+            <!-- KANAN -->
+            <a-plane src="https://raw.githubusercontent.com/YOUR_USERNAME/Ar-Tester/main/images/Brahmakanan.png"
+                     position="0.5 0.5 0" rotation="0 -90 0" width="1" height="1"></a-plane>
+
+            <!-- ATAS → pakai gambar depan dulu -->
+            <a-plane src="https://raw.githubusercontent.com/YOUR_USERNAME/Ar-Tester/main/images/Brahmadepan.png"
+                     position="0 1 0" rotation="-90 0 0" width="1" height="1"></a-plane>
+
+            <!-- BAWAH -->
+            <a-plane src="https://raw.githubusercontent.com/YOUR_USERNAME/Ar-Tester/main/images/Brahmadepan.png"
+                     position="0 0 0" rotation="90 0 0" width="1" height="1"></a-plane>
+
+        </a-entity>
+
+    </a-marker>
+
+    <a-entity camera></a-entity>
+
+</a-scene>
+
+<!-- ===================================================== -->
+<!-- ================== JAVASCRIPT ======================== -->
+<!-- ===================================================== -->
 <script>
-let box = null;
+let model = null;
 
-window.onload = () => {
-    box = document.querySelector("#modelBox");
-};
+document.addEventListener("DOMContentLoaded", () => {
+    model = document.getElementById("brahmaModel");
 
-function rotateModel() {
-    let r = box.getAttribute("rotation");
-    box.setAttribute("rotation", { x: r.x, y: r.y + 10, z: r.z });
+    const marker = document.getElementById("markerBrahma");
+
+    marker.addEventListener("markerFound", () => {
+        document.getElementById("openMateriBtn").style.display = "block";
+        document.getElementById("controls").style.display = "flex";
+    });
+
+    marker.addEventListener("markerLost", () => {
+        document.getElementById("controls").style.display = "none";
+        // open materi tetap tidak hilang, sesuai permintaan
+    });
+});
+
+function rotate() {
+    let r = model.getAttribute("rotation");
+    model.setAttribute("rotation", { x: r.x, y: r.y + 10, z: r.z });
 }
 
 function zoomIn() {
-    let s = box.getAttribute("scale");
-    box.setAttribute("scale", { x: s.x + 0.1, y: s.y + 0.1, z: s.z + 0.1 });
+    let s = model.getAttribute("scale");
+    model.setAttribute("scale", { x: s.x + 0.1, y: s.y + 0.1, z: s.z + 0.1 });
 }
 
 function zoomOut() {
-    let s = box.getAttribute("scale");
-    box.setAttribute("scale", { x: s.x - 0.1, y: s.y - 0.1, z: s.z - 0.1 });
+    let s = model.getAttribute("scale");
+    model.setAttribute("scale", { x: Math.max(0.2, s.x - 0.1), 
+                                 y: Math.max(0.2, s.y - 0.1), 
+                                 z: Math.max(0.2, s.z - 0.1) });
 }
 
 function resetModel() {
-    box.setAttribute("rotation", { x: 0, y: 0, z: 0 });
-    box.setAttribute("scale", { x: 1, y: 1, z: 1 });
+    model.setAttribute("scale", { x: 1, y: 1, z: 1 });
+    model.setAttribute("rotation", { x: 0, y: 0, z: 0 });
 }
 
-// Panel Materi
+function closeMateri() {
+    document.getElementById("materiPanel").style.display = "none";
+}
+
 document.getElementById("openMateriBtn").onclick = () => {
     document.getElementById("materiPanel").style.display = "block";
-};
-document.getElementById("closeMateriBtn").onclick = () => {
-    document.getElementById("materiPanel").style.display = "none";
 };
 </script>
 
