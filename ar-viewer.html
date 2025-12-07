@@ -306,11 +306,17 @@
             box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
             transition: all 0.3s ease;
             margin-top: 15px;
+            position: relative;
+            z-index: 10;
         }
 
         .viewer-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 15px 40px rgba(139, 92, 246, 0.6);
+        }
+
+        .viewer-button:active {
+            transform: translateY(0);
         }
 
         /* Responsive */
@@ -715,11 +721,20 @@
             return paths[markerId] || null;
         }
 
-        // Open 3D Viewer
+        // Open 3D Viewer with debug
         function open3DViewer() {
+            console.log('open3DViewer called');
+            console.log('current3DModel:', current3DModel);
+            console.log('currentMarkerId:', currentMarkerId);
+            
             if (current3DModel) {
                 const modelName = markerData[currentMarkerId].name;
-                window.location.href = `3d-viewer.html?model=${encodeURIComponent(current3DModel)}&name=${encodeURIComponent(modelName)}`;
+                const url = `3d-viewer.html?model=${encodeURIComponent(current3DModel)}&name=${encodeURIComponent(modelName)}`;
+                console.log('Redirecting to:', url);
+                window.location.href = url;
+            } else {
+                console.error('No 3D model path found');
+                alert('Model 3D tidak tersedia');
             }
         }
 
