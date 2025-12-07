@@ -7,6 +7,7 @@
     
     <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     
     <style>
         * {
@@ -607,99 +608,8 @@
             document.getElementById('error-message').classList.add('show');
         }
 
-        // GLTFLoader implementation
-        THREE.GLTFLoader = (function() {
-            function GLTFLoader() {}
-            
-            GLTFLoader.prototype.load = function(url, onLoad, onProgress, onError) {
-                const loader = new THREE.FileLoader();
-                loader.setResponseType('arraybuffer');
-                
-                loader.load(url, (data) => {
-                    try {
-                        this.parse(data, onLoad);
-                    } catch(e) {
-                        if (onError) onError(e);
-                    }
-                }, onProgress, onError);
-            };
-            
-            GLTFLoader.prototype.parse = function(data, onLoad) {
-                const magic = new Uint32Array(data, 0, 1)[0];
-                
-                if (magic === 0x46546C67) {
-                    // GLB format
-                    const view = new DataView(data);
-                    const jsonChunkLength = view.getUint32(12, true);
-                    const jsonChunkData = new Uint8Array(data, 20, jsonChunkLength);
-                    const jsonString = new TextDecoder().decode(jsonChunkData);
-                    const json = JSON.parse(jsonString);
-                    
-                    const binChunkStart = 20 + jsonChunkLength + 8;
-                    const binChunkData = data.slice(binChunkStart);
-                    
-                    this.parseGLTF(json, binChunkData, onLoad);
-                } else {
-                    // GLTF format
-                    const jsonString = new TextDecoder().decode(data);
-                    const json = JSON.parse(jsonString);
-                    this.parseGLTF(json, null, onLoad);
-                }
-            };
-            
-            GLTFLoader.prototype.parseGLTF = function(json, binData, onLoad) {
-                const group = new THREE.Group();
-                
-                // Simple mesh creation from first mesh in GLTF
-                if (json.meshes && json.meshes.length > 0) {
-                    const mesh = json.meshes[0];
-                    const primitive = mesh.primitives[0];
-                    
-                    // Get accessor for position
-                    const posAccessor = json.accessors[primitive.attributes.POSITION];
-                    const posBufferView = json.bufferViews[posAccessor.bufferView];
-                    
-                    // Extract position data
-                    const positions = new Float32Array(
-                        binData,
-                        posBufferView.byteOffset || 0,
-                        posAccessor.count * 3
-                    );
-                    
-                    // Create geometry
-                    const geometry = new THREE.BufferGeometry();
-                    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                    
-                    // Get indices if available
-                    if (primitive.indices !== undefined) {
-                        const indAccessor = json.accessors[primitive.indices];
-                        const indBufferView = json.bufferViews[indAccessor.bufferView];
-                        const indices = new Uint16Array(
-                            binData,
-                            indBufferView.byteOffset || 0,
-                            indAccessor.count
-                        );
-                        geometry.setIndex(new THREE.BufferAttribute(indices, 1));
-                    }
-                    
-                    geometry.computeVertexNormals();
-                    
-                    // Create material
-                    const material = new THREE.MeshStandardMaterial({
-                        color: 0xcccccc,
-                        roughness: 0.7,
-                        metalness: 0.2
-                    });
-                    
-                    const meshObj = new THREE.Mesh(geometry, material);
-                    group.add(meshObj);
-                }
-                
-                onLoad({ scene: group });
-            };
-            
-            return GLTFLoader;
-        })();
+        // Debug: Log model path
+        console.log('Loading model from:', modelPath);
     </script>
 </body>
 </html>
