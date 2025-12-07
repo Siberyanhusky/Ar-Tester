@@ -293,6 +293,26 @@
             box-shadow: 0 15px 40px rgba(16, 185, 129, 0.6);
         }
 
+        /* 3D Viewer Button */
+        .viewer-button {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .viewer-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.6);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .modal-content {
@@ -355,6 +375,9 @@
             </div>
             <div class="modal-footer">
                 <button class="btn-close" onclick="closeModal()">Tutup</button>
+                <button class="viewer-button" id="viewer-button" style="display:none;" onclick="open3DViewer()">
+                    🔍 Lihat Model 3D Interaktif
+                </button>
                 <button class="tour-button" id="tour-button" style="display:none;" onclick="startTour()">
                     🎥 Mulai Virtual Tour
                 </button>
@@ -419,15 +442,12 @@
 
         <!-- Marker 3: Homo Erectus (3D MODEL) ⭐ -->
         <a-marker type="barcode" value="3" id="marker-3">
-            <!-- Container untuk rotasi Y (spin horizontal) -->
-            <a-entity rotation="0 0 0" animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
-                <!-- Model dengan rotasi X agar berdiri tegak -->
-                <a-entity 
-                    gltf-model="assets/images/fossils/homo-erectus.glb"
-                    scale="0.6 0.6 0.6"
-                    position="0 0.4 0"
-                    rotation="-75 0 0">
-                </a-entity>
+            <!-- Model DIAM (no auto-rotate) untuk preview -->
+            <a-entity 
+                gltf-model="assets/images/fossils/homo-erectus.glb"
+                scale="0.6 0.6 0.6"
+                position="0 0.4 0"
+                rotation="-75 0 0">
             </a-entity>
             <!-- Lighting untuk tengkorak -->
             <a-entity light="type: point; intensity: 1.0; distance: 2.5;" position="0.5 1 0.5"></a-entity>
@@ -610,6 +630,7 @@
 
         let currentMarkerId = null;
         let currentTourUrl = null;
+        let current3DModel = null;
 
         // Hide loading screen
         function hideLoading() {
@@ -661,6 +682,17 @@
                 badgeContainer.innerHTML = '';
             }
 
+            // Show 3D Viewer button for 3D models
+            const viewerButton = document.getElementById('viewer-button');
+            if (data.is3D) {
+                viewerButton.style.display = 'block';
+                current3DModel = getModelPath(markerId);
+            } else {
+                viewerButton.style.display = 'none';
+                current3DModel = null;
+            }
+
+            // Show Virtual Tour button for tours
             const tourButton = document.getElementById('tour-button');
             if (data.type === 'virtual-tour') {
                 tourButton.style.display = 'block';
@@ -671,6 +703,24 @@
             }
 
             document.getElementById('info-modal').classList.add('show');
+        }
+
+        // Get model path based on marker ID
+        function getModelPath(markerId) {
+            const paths = {
+                1: 'assets/images/artifacts/kapak-genggam.glb',
+                3: 'assets/images/fossils/homo-erectus.glb',
+                7: 'assets/images/structures/menhir.glb'
+            };
+            return paths[markerId] || null;
+        }
+
+        // Open 3D Viewer
+        function open3DViewer() {
+            if (current3DModel) {
+                const modelName = markerData[currentMarkerId].name;
+                window.location.href = `3d-viewer.html?model=${encodeURIComponent(current3DModel)}&name=${encodeURIComponent(modelName)}`;
+            }
         }
 
         // Close modal
