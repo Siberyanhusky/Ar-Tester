@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Model Viewer - Sejarah Indonesia</title>
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
+            color: white;
+        }
+
+        /* Canvas Container */
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .loading-progress {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Header */
+        #header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: rgba(30, 30, 46, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #back-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateX(-5px);
+        }
+
+        #model-title {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            flex: 1;
+        }
+
+        .title-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        /* Controls Info */
+        #controls-info {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 30, 46, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 90%;
+        }
+
+        .control-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        .control-icon {
+            width: 35px;
+            height: 35px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .control-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-label {
+            font-weight: 600;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .control-desc {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* Reset Button */
+        #reset-button {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background: rgba(139, 92, 246, 0.9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        #reset-button:hover {
+            background: rgba(139, 92, 246, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.6);
+        }
+
+        /* Error Message */
+        #error-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(239, 68, 68, 0.95);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 10000;
+            display: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        #error-message.show {
+            display: block;
+        }
+
+        .error-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .error-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .error-desc {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #header {
+                padding: 15px;
+            }
+
+            #model-title {
+                font-size: 16px;
+            }
+
+            .title-badge {
+                font-size: 10px;
+                padding: 3px 10px;
+            }
+
+            #controls-info {
+                padding: 12px 20px;
+                gap: 15px;
+                bottom: 10px;
+            }
+
+            .control-item {
+                font-size: 11px;
+            }
+
+            .control-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 16px;
+            }
+
+            #reset-button {
+                top: auto;
+                bottom: 100px;
+                right: 15px;
+                padding: 10px 20px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="spinner"></div>
+        <div class="loading-text">Memuat Model 3D...</div>
+        <div class="loading-progress" id="loading-progress">0%</div>
+    </div>
+
+    <!-- Error Message -->
+    <div id="error-message">
+        <div class="error-icon">⚠️</div>
+        <div class="error-title">Gagal Memuat Model</div>
+        <div class="error-desc">Model 3D tidak ditemukan atau format tidak didukung.</div>
+    </div>
+
+    <!-- Header -->
+    <div id="header">
+        <a href="ar-viewer.html" id="back-button">
+            <span>←</span>
+            <span>Kembali</span>
+        </a>
+        <div id="model-title">
+            <span id="model-name">Model 3D</span>
+            <span class="title-badge">Interactive Viewer</span>
+        </div>
+        <div style="width: 100px;"></div> <!-- Spacer untuk center title -->
+    </div>
+
+    <!-- Reset Button -->
+    <button id="reset-button" onclick="resetCamera()">🔄 Reset View</button>
+
+    <!-- Controls Info -->
+    <div id="controls-info">
+        <div class="control-item">
+            <div class="control-icon">🖱️</div>
+            <div class="control-text">
+                <span class="control-label">Drag / Swipe</span>
+                <span class="control-desc">Rotate</span>
+            </div>
+        </div>
+        <div class="control-item">
+            <div class="control-icon">🔍</div>
+            <div class="control-text">
+                <span class="control-label">Scroll / Pinch</span>
+                <span class="control-desc">Zoom</span>
+            </div>
+        </div>
+        <div class="control-item">
+            <div class="control-icon">✋</div>
+            <div class="control-text">
+                <span class="control-label">Right Click</span>
+                <span class="control-desc">Pan</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Canvas Container -->
+    <div id="canvas-container"></div>
+
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const modelPath = urlParams.get('model');
+        const modelName = urlParams.get('name') || 'Model 3D';
+
+        // Set model name in header
+        document.getElementById('model-name').textContent = modelName;
+
+        // Three.js variables
+        let scene, camera, renderer, model, controls;
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let rotation = { x: 0, y: 0 };
+        let targetRotation = { x: 0, y: 0 };
+        let cameraDistance = 5;
+        let targetCameraDistance = 5;
+
+        // Touch variables
+        let touchStartDistance = 0;
+        let lastTouchX = 0;
+        let lastTouchY = 0;
+
+        // Initialize
+        init();
+        animate();
+
+        function init() {
+            // Check if model path exists
+            if (!modelPath) {
+                showError();
+                return;
+            }
+
+            // Create scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x1e1e2e);
+
+            // Create camera
+            camera = new THREE.PerspectiveCamera(
+                45,
+                window.innerWidth / window.innerHeight,
+                0.1,
+                1000
+            );
+            camera.position.set(0, 1.5, 5);
+            camera.lookAt(0, 1, 0);
+
+            // Create renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Add lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight1.position.set(5, 5, 5);
+            directionalLight1.castShadow = true;
+            scene.add(directionalLight1);
+
+            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+            directionalLight2.position.set(-5, 3, -5);
+            scene.add(directionalLight2);
+
+            const pointLight = new THREE.PointLight(0x8b5cf6, 0.5, 10);
+            pointLight.position.set(0, 3, 0);
+            scene.add(pointLight);
+
+            // Add grid helper (optional)
+            const gridHelper = new THREE.GridHelper(10, 10, 0x444444, 0x222222);
+            gridHelper.position.y = -0.5;
+            scene.add(gridHelper);
+
+            // Load 3D model
+            loadModel(modelPath);
+
+            // Event listeners
+            window.addEventListener('resize', onWindowResize);
+            setupMouseControls();
+            setupTouchControls();
+        }
+
+        function loadModel(path) {
+            const loader = new THREE.GLTFLoader();
+            
+            loader.load(
+                path,
+                function(gltf) {
+                    model = gltf.scene;
+                    
+                    // Center and scale model
+                    const box = new THREE.Box3().setFromObject(model);
+                    const center = box.getCenter(new THREE.Vector3());
+                    const size = box.getSize(new THREE.Vector3());
+                    
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const scale = 2 / maxDim;
+                    model.scale.multiplyScalar(scale);
+                    
+                    model.position.sub(center.multiplyScalar(scale));
+                    model.position.y += 1;
+                    
+                    // Enable shadows
+                    model.traverse((child) => {
+                        if (child.isMesh) {
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                        }
+                    });
+                    
+                    scene.add(model);
+                    hideLoading();
+                },
+                function(xhr) {
+                    const progress = (xhr.loaded / xhr.total * 100).toFixed(0);
+                    document.getElementById('loading-progress').textContent = progress + '%';
+                },
+                function(error) {
+                    console.error('Error loading model:', error);
+                    showError();
+                }
+            );
+        }
+
+        function setupMouseControls() {
+            const canvas = renderer.domElement;
+
+            // Mouse down
+            canvas.addEventListener('mousedown', (e) => {
+                if (e.button === 0) { // Left click only
+                    isDragging = true;
+                    previousMousePosition = { x: e.clientX, y: e.clientY };
+                }
+            });
+
+            // Mouse move
+            canvas.addEventListener('mousemove', (e) => {
+                if (isDragging && model) {
+                    const deltaX = e.clientX - previousMousePosition.x;
+                    const deltaY = e.clientY - previousMousePosition.y;
+                    
+                    targetRotation.y += deltaX * 0.01;
+                    targetRotation.x += deltaY * 0.01;
+                    
+                    // Limit vertical rotation
+                    targetRotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, targetRotation.x));
+                    
+                    previousMousePosition = { x: e.clientX, y: e.clientY };
+                }
+            });
+
+            // Mouse up
+            canvas.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            canvas.addEventListener('mouseleave', () => {
+                isDragging = false;
+            });
+
+            // Mouse wheel for zoom
+            canvas.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                targetCameraDistance += e.deltaY * 0.01;
+                targetCameraDistance = Math.max(2, Math.min(15, targetCameraDistance));
+            });
+        }
+
+        function setupTouchControls() {
+            const canvas = renderer.domElement;
+
+            canvas.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) {
+                    // Single touch - rotate
+                    lastTouchX = e.touches[0].clientX;
+                    lastTouchY = e.touches[0].clientY;
+                    isDragging = true;
+                } else if (e.touches.length === 2) {
+                    // Two touches - zoom
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    touchStartDistance = Math.sqrt(dx * dx + dy * dy);
+                }
+            });
+
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                
+                if (e.touches.length === 1 && isDragging && model) {
+                    // Rotate
+                    const deltaX = e.touches[0].clientX - lastTouchX;
+                    const deltaY = e.touches[0].clientY - lastTouchY;
+                    
+                    targetRotation.y += deltaX * 0.01;
+                    targetRotation.x += deltaY * 0.01;
+                    targetRotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, targetRotation.x));
+                    
+                    lastTouchX = e.touches[0].clientX;
+                    lastTouchY = e.touches[0].clientY;
+                } else if (e.touches.length === 2) {
+                    // Zoom
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    const delta = touchStartDistance - distance;
+                    targetCameraDistance += delta * 0.01;
+                    targetCameraDistance = Math.max(2, Math.min(15, targetCameraDistance));
+                    
+                    touchStartDistance = distance;
+                }
+            });
+
+            canvas.addEventListener('touchend', () => {
+                isDragging = false;
+            });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (model) {
+                // Smooth rotation
+                rotation.x += (targetRotation.x - rotation.x) * 0.1;
+                rotation.y += (targetRotation.y - rotation.y) * 0.1;
+                
+                model.rotation.x = rotation.x;
+                model.rotation.y = rotation.y;
+            }
+
+            // Smooth zoom
+            cameraDistance += (targetCameraDistance - cameraDistance) * 0.1;
+            camera.position.z = cameraDistance;
+
+            renderer.render(scene, camera);
+        }
+
+        function resetCamera() {
+            targetRotation = { x: 0, y: 0 };
+            targetCameraDistance = 5;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function hideLoading() {
+            const loading = document.getElementById('loading-screen');
+            loading.classList.add('hidden');
+        }
+
+        function showError() {
+            document.getElementById('loading-screen').classList.add('hidden');
+            document.getElementById('error-message').classList.add('show');
+        }
+
+        // GLTFLoader implementation
+        THREE.GLTFLoader = (function() {
+            function GLTFLoader() {}
+            
+            GLTFLoader.prototype.load = function(url, onLoad, onProgress, onError) {
+                const loader = new THREE.FileLoader();
+                loader.setResponseType('arraybuffer');
+                
+                loader.load(url, (data) => {
+                    try {
+                        this.parse(data, onLoad);
+                    } catch(e) {
+                        if (onError) onError(e);
+                    }
+                }, onProgress, onError);
+            };
+            
+            GLTFLoader.prototype.parse = function(data, onLoad) {
+                const magic = new Uint32Array(data, 0, 1)[0];
+                
+                if (magic === 0x46546C67) {
+                    // GLB format
+                    const view = new DataView(data);
+                    const jsonChunkLength = view.getUint32(12, true);
+                    const jsonChunkData = new Uint8Array(data, 20, jsonChunkLength);
+                    const jsonString = new TextDecoder().decode(jsonChunkData);
+                    const json = JSON.parse(jsonString);
+                    
+                    const binChunkStart = 20 + jsonChunkLength + 8;
+                    const binChunkData = data.slice(binChunkStart);
+                    
+                    this.parseGLTF(json, binChunkData, onLoad);
+                } else {
+                    // GLTF format
+                    const jsonString = new TextDecoder().decode(data);
+                    const json = JSON.parse(jsonString);
+                    this.parseGLTF(json, null, onLoad);
+                }
+            };
+            
+            GLTFLoader.prototype.parseGLTF = function(json, binData, onLoad) {
+                const group = new THREE.Group();
+                
+                // Simple mesh creation from first mesh in GLTF
+                if (json.meshes && json.meshes.length > 0) {
+                    const mesh = json.meshes[0];
+                    const primitive = mesh.primitives[0];
+                    
+                    // Get accessor for position
+                    const posAccessor = json.accessors[primitive.attributes.POSITION];
+                    const posBufferView = json.bufferViews[posAccessor.bufferView];
+                    
+                    // Extract position data
+                    const positions = new Float32Array(
+                        binData,
+                        posBufferView.byteOffset || 0,
+                        posAccessor.count * 3
+                    );
+                    
+                    // Create geometry
+                    const geometry = new THREE.BufferGeometry();
+                    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                    
+                    // Get indices if available
+                    if (primitive.indices !== undefined) {
+                        const indAccessor = json.accessors[primitive.indices];
+                        const indBufferView = json.bufferViews[indAccessor.bufferView];
+                        const indices = new Uint16Array(
+                            binData,
+                            indBufferView.byteOffset || 0,
+                            indAccessor.count
+                        );
+                        geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+                    }
+                    
+                    geometry.computeVertexNormals();
+                    
+                    // Create material
+                    const material = new THREE.MeshStandardMaterial({
+                        color: 0xcccccc,
+                        roughness: 0.7,
+                        metalness: 0.2
+                    });
+                    
+                    const meshObj = new THREE.Mesh(geometry, material);
+                    group.add(meshObj);
+                }
+                
+                onLoad({ scene: group });
+            };
+            
+            return GLTFLoader;
+        })();
+    </script>
+</body>
+</html>
