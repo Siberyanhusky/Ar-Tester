@@ -134,6 +134,19 @@
             display: block;
         }
 
+        #marker-status.model-3d {
+            background: rgba(139, 92, 246, 0.95);
+        }
+
+        #marker-status .badge-3d {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            margin-left: 5px;
+        }
+
         @keyframes slideUp {
             from {
                 opacity: 0;
@@ -226,6 +239,17 @@
             color: #667eea;
         }
 
+        .model-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
         .modal-footer {
             margin-top: 25px;
             text-align: center;
@@ -310,7 +334,7 @@
 
     <!-- Instructions -->
     <div id="instructions">
-        📷 Arahkan kamera ke barcode marker (0-9)
+        📷 Arahkan kamera ke barcode marker (0-9) • ✨ Marker 1, 3, 7 = 3D Model
     </div>
 
     <!-- Marker Status -->
@@ -324,6 +348,7 @@
             <div class="modal-header">
                 <h2 class="modal-title" id="modal-title">Judul Objek</h2>
                 <span class="modal-era" id="modal-era">Era</span>
+                <div id="model-badge-container"></div>
             </div>
             <div class="modal-body" id="modal-body">
                 <p>Loading...</p>
@@ -342,11 +367,15 @@
         embedded 
         arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;" 
         vr-mode-ui="enabled: false"
-        renderer="logarithmicDepthBuffer: true; precision: medium;">
+        renderer="logarithmicDepthBuffer: true; precision: medium; antialias: true;">
         
-        <a-entity camera></a-entity>
+        <!-- Camera with better lighting -->
+        <a-entity camera look-controls="enabled: false">
+            <a-entity light="type: ambient; intensity: 0.8;"></a-entity>
+            <a-entity light="type: directional; intensity: 0.8;" position="1 1 1"></a-entity>
+        </a-entity>
 
-        <!-- Marker 0: Prasasti Ciaruteun -->
+        <!-- Marker 0: Prasasti Ciaruteun (2D Image) -->
         <a-marker type="barcode" value="0" id="marker-0">
             <a-image 
                 src="assets/images/artifacts/ciaruteun.png" 
@@ -360,21 +389,21 @@
             </a-image>
         </a-marker>
 
-        <!-- Marker 1: Kapak Genggam -->
+        <!-- Marker 1: Kapak Genggam (3D MODEL) ⭐ -->
         <a-marker type="barcode" value="1" id="marker-1">
-            <a-image 
-                src="assets/images/artifacts/kapak-genggam.png" 
-                width="0.9" 
-                height="0.6" 
-                position="0 0.4 0"
-                rotation="-90 0 0"
-                transparent="true"
-                shader="flat"
-                animation="property: position; to: 0 0.5 0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
-            </a-image>
+            <a-entity 
+                gltf-model="assets/images/artifacts/kapak-genggam.glb"
+                scale="0.3 0.3 0.3"
+                position="0 0.3 0"
+                rotation="0 0 0"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear"
+                animation__float="property: position; to: 0 0.4 0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
+            </a-entity>
+            <!-- Ambient lighting untuk 3D model -->
+            <a-entity light="type: point; intensity: 0.8; distance: 3;" position="0 1 0"></a-entity>
         </a-marker>
 
-        <!-- Marker 2: Kapak Lonjong -->
+        <!-- Marker 2: Kapak Lonjong (2D Image) -->
         <a-marker type="barcode" value="2" id="marker-2">
             <a-image 
                 src="assets/images/artifacts/kapak-lonjong.png" 
@@ -388,20 +417,21 @@
             </a-image>
         </a-marker>
 
-        <!-- Marker 3: Homo Erectus -->
+        <!-- Marker 3: Homo Erectus (3D MODEL) ⭐ -->
         <a-marker type="barcode" value="3" id="marker-3">
-            <a-image 
-                src="assets/images/fossils/homo-erectus.png" 
-                width="0.6" 
-                height="1.2" 
-                position="0 0.6 0"
-                rotation="-90 0 0"
-                transparent="true"
-                shader="flat">
-            </a-image>
+            <a-entity 
+                gltf-model="assets/images/fossils/homo-erectus.glb"
+                scale="0.5 0.5 0.5"
+                position="0 0.5 0"
+                rotation="0 0 0"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
+            </a-entity>
+            <!-- Lighting untuk tengkorak -->
+            <a-entity light="type: point; intensity: 1.0; distance: 2.5;" position="0.5 1 0.5"></a-entity>
+            <a-entity light="type: point; intensity: 0.6; distance: 2.5;" position="-0.5 0.8 -0.5"></a-entity>
         </a-marker>
 
-        <!-- Marker 4: Meganthropus -->
+        <!-- Marker 4: Meganthropus (2D Image) -->
         <a-marker type="barcode" value="4" id="marker-4">
             <a-image 
                 src="assets/images/fossils/meganthropus.png" 
@@ -414,7 +444,7 @@
             </a-image>
         </a-marker>
 
-        <!-- Marker 5: Dolmen -->
+        <!-- Marker 5: Dolmen (2D Image) -->
         <a-marker type="barcode" value="5" id="marker-5">
             <a-image 
                 src="assets/images/structures/dolmen.png" 
@@ -427,7 +457,7 @@
             </a-image>
         </a-marker>
 
-        <!-- Marker 6: Kjokkenmoddinger -->
+        <!-- Marker 6: Kjokkenmoddinger (2D Image) -->
         <a-marker type="barcode" value="6" id="marker-6">
             <a-image 
                 src="assets/images/structures/kjokkenmoddinger.png" 
@@ -440,17 +470,17 @@
             </a-image>
         </a-marker>
 
-        <!-- Marker 7: Menhir -->
+        <!-- Marker 7: Menhir (3D MODEL) ⭐ -->
         <a-marker type="barcode" value="7" id="marker-7">
-            <a-image 
-                src="assets/images/structures/menhir.png" 
-                width="0.5" 
-                height="1.5" 
-                position="0 0.8 0"
-                rotation="-90 0 0"
-                transparent="true"
-                shader="flat">
-            </a-image>
+            <a-entity 
+                gltf-model="assets/images/structures/menhir.glb"
+                scale="0.4 0.4 0.4"
+                position="0 0.6 0"
+                rotation="0 0 0"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear">
+            </a-entity>
+            <!-- Lighting untuk batu menhir -->
+            <a-entity light="type: point; intensity: 0.9; distance: 3;" position="0 1.5 0"></a-entity>
         </a-marker>
 
         <!-- Marker 8: Candi Borobudur (Virtual Tour) -->
@@ -497,59 +527,68 @@
 
     <!-- JavaScript -->
     <script>
-        // Marker data - 100% sesuai contents.json
+        // Marker data dengan flag 3D model
         const markerData = {
             0: {
                 name: "Prasasti Ciaruteun",
                 type: "artifact",
+                is3D: false,
                 era: "Kerajaan Tarumanegara (Abad 5 M)",
                 description: "Prasasti Ciaruteun merupakan peninggalan penting Kerajaan Tarumanegara yang ditemukan di Bogor. Prasasti ini terdiri dari dua inskripsi dengan aksara Pallawa berbahasa Sanskerta. Yang paling menarik adalah gambar sepasang telapak kaki yang melambangkan kaki Raja Purnawarman, disamakan dengan Dewa Wisnu sebagai bentuk penghormatan."
             },
             1: {
                 name: "Kapak Genggam",
                 type: "artifact",
+                is3D: true, // ⭐ 3D MODEL
                 era: "Zaman Paleolitikum (2 juta - 200 ribu tahun lalu)",
                 description: "Kapak genggam adalah alat batu tertua dari masa Paleolitik berbentuk seperti daun dengan kedua sisi diasah tajam. Digunakan untuk memotong daging, menguliti, mengolah kayu, dan menggali umbi. Penemuan terkenal dari Pacitan melahirkan Kebudayaan Pacitan."
             },
             2: {
                 name: "Kapak Lonjong",
                 type: "artifact",
+                is3D: false,
                 era: "Zaman Neolitikum (3000 - 1500 SM)",
                 description: "Kapak lonjong menandai revolusi teknologi dari Paleolitikum ke Neolitikum. Dibuat dengan teknik pengasahan hingga permukaannya halus dan licin. Bentuk lonjong memungkinkan penggunaan bertangkai sebagai cangkul atau beliung untuk membuka lahan pertanian."
             },
             3: {
                 name: "Homo Erectus",
                 type: "fossil",
+                is3D: true, // ⭐ 3D MODEL
                 era: "Pleistosen Tengah (1,5 juta - 300 ribu tahun lalu)",
                 description: "Homo erectus adalah manusia purba penting dalam evolusi manusia, fosil pertamanya ditemukan Eugene Dubois di Trinil tahun 1891. Memiliki tubuh tegap 160-170 cm dengan volume otak 750-1.200 cc. Mampu membuat alat batu, menguasai api untuk memasak dan perlindungan."
             },
             4: {
                 name: "Meganthropus Paleojavanicus",
                 type: "fossil",
+                is3D: false,
                 era: "Pleistosen Awal (1-2 juta tahun lalu)",
                 description: "Meganthropus paleojavanicus adalah manusia purba tertua di Indonesia yang fosilnya ditemukan oleh von Koenigswald di Sangiran tahun 1937-1941. Memiliki tubuh tinggi sekitar 2,5 meter, rahang tebal tanpa dagu, gigi geraham besar, dan kapasitas otak 900 cc."
             },
             5: {
                 name: "Dolmen",
                 type: "structure",
+                is3D: false,
                 era: "Zaman Megalitikum (2000 SM - 500 M)",
                 description: "Dolmen berasal dari bahasa Breton yang berarti 'meja batu', tersusun dari batu-batu tegak sebagai penyangga dengan satu batu datar besar di atasnya. Berfungsi sebagai tempat sesaji untuk arwah nenek moyang dan penutup kubur batu."
             },
             6: {
                 name: "Kjokkenmoddinger",
                 type: "structure",
+                is3D: false,
                 era: "Zaman Mesolitikum (10.000 - 3000 SM)",
                 description: "Kjokkenmoddinger berasal dari bahasa Denmark yang berarti 'sampah dapur', merujuk pada tumpukan kulit kerang dan sisa makanan manusia purba di tepi pantai. Menjadi bukti kehidupan semi-nomaden yang bergantung pada hasil laut."
             },
             7: {
                 name: "Menhir",
                 type: "structure",
+                is3D: true, // ⭐ 3D MODEL
                 era: "Zaman Megalitikum (2000 SM - 500 M)",
                 description: "Menhir adalah batu tegak vertikal berukuran besar dari batu alam yang bersifat sakral. Memiliki fungsi sebagai sarana pemujaan, tempat peringatan, simbol kekuatan dan identitas, serta tempat menampung roh leluhur."
             },
             8: {
                 name: "Candi Borobudur",
                 type: "virtual-tour",
+                is3D: false,
                 era: "Dinasti Syailendra (780-830 M)",
                 location: "Magelang, Jawa Tengah",
                 description: "Candi Buddha terbesar di dunia yang dibangun pada abad ke-8. Memiliki struktur punden berundak dengan relief yang menggambarkan ajaran Buddha Mahayana.",
@@ -558,6 +597,7 @@
             9: {
                 name: "Candi Prambanan",
                 type: "virtual-tour",
+                is3D: false,
                 era: "Kerajaan Mataram Kuno (856 M)",
                 location: "Sleman, Yogyakarta",
                 description: "Kompleks candi Hindu terbesar di Indonesia yang dibangun pada abad ke-9. Terdiri dari 240 struktur candi dengan Candi Siwa sebagai candi utama setinggi 47 meter.",
@@ -578,11 +618,17 @@
         }
 
         // Show marker status
-        function showMarkerStatus(markerName) {
+        function showMarkerStatus(markerName, is3D) {
             const status = document.getElementById('marker-status');
             const nameSpan = document.getElementById('marker-name');
             if (status && nameSpan) {
-                nameSpan.textContent = markerName;
+                if (is3D) {
+                    nameSpan.innerHTML = `${markerName} <span class="badge-3d">3D</span>`;
+                    status.classList.add('model-3d');
+                } else {
+                    nameSpan.textContent = markerName;
+                    status.classList.remove('model-3d');
+                }
                 status.classList.add('show');
             }
         }
@@ -603,6 +649,14 @@
             document.getElementById('modal-title').textContent = data.name;
             document.getElementById('modal-era').textContent = data.era;
             document.getElementById('modal-body').innerHTML = `<p>${data.description}</p>`;
+
+            // Show 3D badge if applicable
+            const badgeContainer = document.getElementById('model-badge-container');
+            if (data.is3D) {
+                badgeContainer.innerHTML = '<span class="model-badge">🎨 Model 3D Interaktif</span>';
+            } else {
+                badgeContainer.innerHTML = '';
+            }
 
             const tourButton = document.getElementById('tour-button');
             if (data.type === 'virtual-tour') {
@@ -656,7 +710,7 @@
                             currentMarkerId = i;
                             const data = markerData[i];
                             if (data) {
-                                showMarkerStatus(data.name);
+                                showMarkerStatus(data.name, data.is3D);
                                 // Auto show modal after 1 second
                                 setTimeout(() => showInfo(i), 1000);
                             }
