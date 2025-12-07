@@ -419,12 +419,15 @@
 
         <!-- Marker 3: Homo Erectus (3D MODEL) ⭐ -->
         <a-marker type="barcode" value="3" id="marker-3">
-            <a-entity 
-                gltf-model="assets/images/fossils/homo-erectus.glb"
-                scale="0.5 0.5 0.5"
-                position="0 0.5 0"
-                rotation="0 0 0"
-                animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
+            <!-- Container untuk rotasi Y (spin horizontal) -->
+            <a-entity rotation="0 0 0" animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
+                <!-- Model dengan rotasi X agar berdiri tegak -->
+                <a-entity 
+                    gltf-model="assets/images/fossils/homo-erectus.glb"
+                    scale="0.6 0.6 0.6"
+                    position="0 0.4 0"
+                    rotation="-75 0 0">
+                </a-entity>
             </a-entity>
             <!-- Lighting untuk tengkorak -->
             <a-entity light="type: point; intensity: 1.0; distance: 2.5;" position="0.5 1 0.5"></a-entity>
