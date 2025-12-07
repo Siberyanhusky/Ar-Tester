@@ -1,0 +1,127 @@
+{
+  "default": {
+    "firstScene": "candi-siwa",
+    "author": "AR Sejarah Indonesia",
+    "sceneFadeDuration": 1000,
+    "autoLoad": true
+  },
+  "scenes": {
+    "candi-siwa": {
+      "title": "Candi Siwa",
+      "type": "equirectangular",
+      "panorama": "https://bbull0444-png.github.io/ar-sejarah-indonesia/assets/virtual-tours/prambanan/scene-1.jpg",
+      "pitch": 0,
+      "yaw": 180,
+      "hfov": 100,
+      "description": "Candi Siwa adalah candi tertinggi dan terbesar di kompleks Prambanan dengan ketinggian 47 meter. Didedikasikan untuk Dewa Siwa sebagai Sang Penghancur dalam Trimurti Hindu.",
+      "facts": [
+        "Tinggi candi: 47 meter (tertinggi di Prambanan)",
+        "Berisi 4 ruang dengan arca Siwa, Ganesha, Agastya, dan Durga",
+        "Relief Ramayana menghiasi dinding candi",
+        "Dibangun pada abad ke-9 Masehi"
+      ],
+      "history": "Candi Siwa dibangun oleh Raja Rakai Pikatan dari Wangsa Sanjaya sebagai tandingan Candi Borobudur yang beragama Buddha. Ini adalah monumen Hindu terbesar di Indonesia.",
+      "hotSpots": [
+        {
+          "pitch": -5,
+          "yaw": 120,
+          "type": "scene",
+          "text": "Lihat Candi Brahma",
+          "sceneId": "candi-brahma"
+        },
+        {
+          "pitch": 0,
+          "yaw": 0,
+          "type": "info",
+          "text": "Relief Ramayana",
+          "description": "Relief Ramayana di Candi Siwa menceritakan kisah Rama dan Sinta dalam epik Ramayana. Relief ini dibaca searah jarum jam dan dilanjutkan di Candi Brahma."
+        },
+        {
+          "pitch": 5,
+          "yaw": 240,
+          "type": "info",
+          "text": "Arca Durga Mahisasura Mardini",
+          "description": "Di ruang barat Candi Siwa terdapat arca Durga yang membunuh banteng (Mahisasura). Arca ini sering disebut Loro Jonggrang dalam legenda lokal."
+        }
+      ]
+    },
+    "candi-brahma": {
+      "title": "Candi Brahma",
+      "type": "equirectangular",
+      "panorama": "https://bbull0444-png.github.io/ar-sejarah-indonesia/assets/virtual-tours/prambanan/scene-2.jpg",
+      "pitch": 0,
+      "yaw": 180,
+      "hfov": 100,
+      "description": "Candi Brahma terletak di sebelah selatan Candi Siwa dan didedikasikan untuk Dewa Brahma sebagai Sang Pencipta dalam Trimurti Hindu.",
+      "facts": [
+        "Tinggi candi: 33 meter",
+        "Berisi arca Brahma berkepala empat",
+        "Relief melanjutkan cerita Ramayana dari Candi Siwa",
+        "Menghadap ke arah timur sesuai kepercayaan Hindu"
+      ],
+      "history": "Candi Brahma melengkapi konsep Trimurti bersama Candi Siwa dan Wisnu. Arca Brahma di dalamnya memiliki empat kepala yang menghadap ke empat penjuru mata angin.",
+      "hotSpots": [
+        {
+          "pitch": 0,
+          "yaw": 90,
+          "type": "scene",
+          "text": "Lihat Candi Wisnu",
+          "sceneId": "candi-wisnu"
+        },
+        {
+          "pitch": 5,
+          "yaw": 270,
+          "type": "scene",
+          "text": "Kembali ke Candi Siwa",
+          "sceneId": "candi-siwa"
+        },
+        {
+          "pitch": -10,
+          "yaw": 180,
+          "type": "info",
+          "text": "Konsep Trimurti",
+          "description": "Trimurti adalah konsep tiga dewa utama Hindu: Brahma (Pencipta), Wisnu (Pemelihara), dan Siwa (Penghancur). Ketiga candi ini melambangkan siklus kehidupan: penciptaan, pemeliharaan, dan penghancuran untuk penciptaan kembali."
+        }
+      ]
+    },
+    "candi-wisnu": {
+      "title": "Candi Wisnu",
+      "type": "equirectangular",
+      "panorama": "https://bbull0444-png.github.io/ar-sejarah-indonesia/assets/virtual-tours/prambanan/scene-3.jpg",
+      "pitch": 0,
+      "yaw": 180,
+      "hfov": 100,
+      "description": "Candi Wisnu terletak di sebelah utara Candi Siwa dan didedikasikan untuk Dewa Wisnu sebagai Sang Pemelihara dalam Trimurti Hindu.",
+      "facts": [
+        "Tinggi candi: 33 meter (sama dengan Candi Brahma)",
+        "Berisi arca Wisnu berkendaraan Garuda",
+        "Relief menceritakan kisah Krishna (avatar Wisnu)",
+        "Arsitektur simetris dengan Candi Brahma"
+      ],
+      "history": "Candi Wisnu melengkapi Trimurti Prambanan. Relief di candi ini menceritakan kisah Krishna, salah satu avatar Wisnu yang paling terkenal dalam mitologi Hindu.",
+      "hotSpots": [
+        {
+          "pitch": 0,
+          "yaw": 180,
+          "type": "scene",
+          "text": "Kembali ke Candi Siwa",
+          "sceneId": "candi-siwa"
+        },
+        {
+          "pitch": -10,
+          "yaw": 90,
+          "type": "scene",
+          "text": "Lihat Candi Brahma",
+          "sceneId": "candi-brahma"
+        },
+        {
+          "pitch": 10,
+          "yaw": 270,
+          "type": "info",
+          "text": "Kompleks Prambanan",
+          "description": "Kompleks Prambanan terdiri dari 240 candi yang tersusun dalam 3 zona: zona dalam (Trimurti), zona tengah (candi pewara), dan zona luar (candi patok). Total luas kompleks mencapai 39,8 hektar."
+        }
+      ]
+    }
+  }
+}
