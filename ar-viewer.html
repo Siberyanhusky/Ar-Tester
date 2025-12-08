@@ -147,6 +147,83 @@
             margin-left: 5px;
         }
 
+        /* Bottom Info Card for AR */
+        #ar-info-card {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 30, 46, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            display: none;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+        }
+
+        #ar-info-card.show {
+            display: block;
+            animation: slideUpCard 0.4s ease;
+        }
+
+        @keyframes slideUpCard {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .ar-card-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .ar-card-era {
+            font-size: 14px;
+            color: #a0a0c0;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .ar-card-period {
+            font-size: 13px;
+            color: #8888aa;
+            margin-bottom: 15px;
+        }
+
+        .ar-card-button {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .ar-card-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.6);
+        }
+
+        .ar-card-button:active {
+            transform: translateY(0);
+        }
+
         @keyframes slideUp {
             from {
                 opacity: 0;
@@ -368,6 +445,16 @@
         ✓ Marker Terdeteksi: <span id="marker-name">-</span>
     </div>
 
+    <!-- AR Info Card (Bottom Card for non-modal markers) -->
+    <div id="ar-info-card">
+        <div class="ar-card-title" id="ar-card-title">Homo Erectus</div>
+        <div class="ar-card-era" id="ar-card-era">Pleistosen Tengah</div>
+        <div class="ar-card-period" id="ar-card-period">1,5 juta - 300 ribu tahun lalu</div>
+        <button class="ar-card-button" id="ar-card-button" onclick="openFromARCard()">
+            🔍 Lihat Model 3D Interaktif
+        </button>
+    </div>
+
     <!-- Info Modal -->
     <div id="info-modal">
         <div class="modal-content">
@@ -446,18 +533,18 @@
             </a-image>
         </a-marker>
 
-        <!-- Marker 3: Homo Erectus (3D MODEL) ⭐ -->
+        <!-- Marker 3: Homo Erectus (2D IMAGE in AR, 3D in Viewer) ⭐ -->
         <a-marker type="barcode" value="3" id="marker-3">
-            <!-- Model DIAM (no auto-rotate) untuk preview -->
-            <a-entity 
-                gltf-model="assets/images/fossils/homo-erectus.glb"
-                scale="0.6 0.6 0.6"
-                position="0 0.4 0"
-                rotation="-75 0 0">
-            </a-entity>
-            <!-- Lighting untuk tengkorak -->
-            <a-entity light="type: point; intensity: 1.0; distance: 2.5;" position="0.5 1 0.5"></a-entity>
-            <a-entity light="type: point; intensity: 0.6; distance: 2.5;" position="-0.5 0.8 -0.5"></a-entity>
+            <!-- Pakai PNG di AR (bukan 3D model) -->
+            <a-image 
+                src="assets/images/fossils/homo-erectus.png" 
+                width="0.6" 
+                height="1.2" 
+                position="0 0.6 0"
+                rotation="-90 0 0"
+                transparent="true"
+                shader="flat">
+            </a-image>
         </a-marker>
 
         <!-- Marker 4: Meganthropus (2D Image) -->
@@ -582,9 +669,17 @@
             3: {
                 name: "Homo Erectus",
                 type: "fossil",
-                is3D: true, // ⭐ 3D MODEL
-                era: "Pleistosen Tengah (1,5 juta - 300 ribu tahun lalu)",
-                description: "Homo erectus adalah manusia purba penting dalam evolusi manusia, fosil pertamanya ditemukan Eugene Dubois di Trinil tahun 1891. Memiliki tubuh tegap 160-170 cm dengan volume otak 750-1.200 cc. Mampu membuat alat batu, menguasai api untuk memasak dan perlindungan."
+                is3D: true,
+                useARCard: true, // ⭐ Pakai AR Card (bukan modal)
+                era: "Pleistosen Tengah",
+                periode: "1,5 juta - 300 ribu tahun lalu",
+                penemu: "Eugene Dubois",
+                tahunPenemuan: "1891",
+                lokasiPenemuan: "Trinil, Jawa Timur",
+                tinggi: "160-170 cm",
+                volumeOtak: "750-1.200 cc",
+                ciri: "Dahi miring ke belakang, alis tebal dan menonjol",
+                description: "Homo erectus merupakan jenis manusia purba yang ditemukan oleh Eugene Dubois pada tahun 1891 dan hidup sekitar 1,5 juta hingga 300 ribu tahun yang lalu. Manusia purba ini memiliki tinggi badan sekitar 160–170 cm dengan tubuh yang tegap dan sudah mampu berjalan tegak sepenuhnya. Volume otaknya berkisar antara 750 hingga 1.200 cc, dengan ciri dahi miring ke belakang dan alis yang tebal dan menonjol. Homo erectus telah mampu menggunakan alat batu sederhana, menguasai api untuk memasak dan perlindungan, serta hidup berkelompok. Mereka biasanya tinggal di gua atau daerah terbuka yang dekat dengan sumber air."
             },
             4: {
                 name: "Meganthropus Paleojavanicus",
@@ -668,6 +763,37 @@
             const status = document.getElementById('marker-status');
             if (status) {
                 status.classList.remove('show');
+            }
+        }
+
+        // Show AR Info Card (for markers with useARCard flag)
+        function showARCard(markerData) {
+            const card = document.getElementById('ar-info-card');
+            if (!card) return;
+
+            document.getElementById('ar-card-title').textContent = markerData.name;
+            document.getElementById('ar-card-era').textContent = markerData.era;
+            document.getElementById('ar-card-period').textContent = markerData.periode || '';
+
+            card.classList.add('show');
+        }
+
+        // Hide AR Info Card
+        function hideARCard() {
+            const card = document.getElementById('ar-info-card');
+            if (card) {
+                card.classList.remove('show');
+            }
+        }
+
+        // Open 3D Viewer from AR Card
+        function openFromARCard() {
+            if (currentMarkerId !== null && markerData[currentMarkerId]) {
+                const data = markerData[currentMarkerId];
+                const modelPath = getModelPath(currentMarkerId);
+                if (modelPath) {
+                    window.location.href = `3d-viewer.html?model=${encodeURIComponent(modelPath)}&name=${encodeURIComponent(data.name)}&marker=${currentMarkerId}`;
+                }
             }
         }
 
@@ -779,14 +905,22 @@
                             const data = markerData[i];
                             if (data) {
                                 showMarkerStatus(data.name, data.is3D);
-                                // Auto show modal after 1 second
-                                setTimeout(() => showInfo(i), 1000);
+                                
+                                // Check if marker uses AR Card or Modal
+                                if (data.useARCard) {
+                                    // Show AR Card (no auto-modal)
+                                    setTimeout(() => showARCard(data), 500);
+                                } else {
+                                    // Show modal as usual
+                                    setTimeout(() => showInfo(i), 1000);
+                                }
                             }
                         });
 
                         marker.addEventListener('markerLost', function() {
                             console.log(`Marker ${i} lost`);
                             hideMarkerStatus();
+                            hideARCard(); // Hide AR card when marker lost
                             currentMarkerId = null;
                         });
                     }
