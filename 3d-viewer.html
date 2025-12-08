@@ -25,9 +25,114 @@
 
         /* Canvas Container */
         #canvas-container {
-            width: 100vw;
+            width: 70vw;
             height: 100vh;
             position: relative;
+            float: left;
+        }
+
+        /* Side Panel */
+        #side-panel {
+            width: 30vw;
+            height: 100vh;
+            position: fixed;
+            right: 0;
+            top: 0;
+            background: rgba(30, 30, 46, 0.98);
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+            padding: 90px 30px 30px 30px;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+            z-index: 999;
+        }
+
+        .panel-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .panel-era {
+            display: inline-block;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .info-section {
+            margin-bottom: 25px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 10px;
+            border-left: 3px solid #8b5cf6;
+        }
+
+        .info-icon {
+            width: 35px;
+            height: 35px;
+            min-width: 35px;
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-right: 12px;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #a0a0c0;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            font-size: 15px;
+            color: white;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .description-section {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .description-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #8b5cf6;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .description-text {
+            font-size: 14px;
+            color: #c0c0d0;
+            line-height: 1.8;
+            text-align: justify;
         }
 
         /* Loading Screen */
@@ -247,6 +352,47 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+            #canvas-container {
+                width: 100vw;
+                height: 50vh;
+                float: none;
+            }
+
+            #side-panel {
+                width: 100vw;
+                height: 50vh;
+                position: fixed;
+                bottom: 0;
+                right: 0;
+                top: auto;
+                padding: 20px;
+                box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+            }
+
+            .panel-title {
+                font-size: 20px;
+            }
+
+            .info-item {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+
+            .info-icon {
+                width: 30px;
+                height: 30px;
+                min-width: 30px;
+                font-size: 16px;
+            }
+
+            .info-value {
+                font-size: 13px;
+            }
+
+            .description-text {
+                font-size: 13px;
+            }
+
             #header {
                 padding: 15px;
             }
@@ -345,14 +491,119 @@
     <!-- Canvas Container -->
     <div id="canvas-container"></div>
 
+    <!-- Side Panel -->
+    <div id="side-panel">
+        <h1 class="panel-title" id="panel-title">Homo Erectus</h1>
+        <span class="panel-era" id="panel-era">Pleistosen Tengah</span>
+
+        <div class="info-section" id="info-section">
+            <!-- Info items will be dynamically populated -->
+        </div>
+
+        <div class="description-section">
+            <div class="description-title">
+                📖 Deskripsi Lengkap
+            </div>
+            <div class="description-text" id="description-text">
+                Loading...
+            </div>
+        </div>
+    </div>
+
     <script>
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const modelPath = urlParams.get('model');
         const modelName = urlParams.get('name') || 'Model 3D';
+        const markerId = urlParams.get('marker');
 
         // Set model name in header
         document.getElementById('model-name').textContent = modelName;
+
+        // Marker data (harus sama dengan ar-viewer.html)
+        const markerDataDetail = {
+            3: {
+                name: "Homo Erectus",
+                era: "Pleistosen Tengah",
+                periode: "1,5 juta - 300 ribu tahun lalu",
+                penemu: "Eugene Dubois",
+                tahunPenemuan: "1891",
+                lokasiPenemuan: "Trinil, Jawa Timur",
+                tinggi: "160-170 cm",
+                volumeOtak: "750-1.200 cc",
+                ciri: "Dahi miring ke belakang, alis tebal dan menonjol",
+                description: "Homo erectus merupakan jenis manusia purba yang ditemukan oleh Eugene Dubois pada tahun 1891 dan hidup sekitar 1,5 juta hingga 300 ribu tahun yang lalu. Manusia purba ini memiliki tinggi badan sekitar 160–170 cm dengan tubuh yang tegap dan sudah mampu berjalan tegak sepenuhnya. Volume otaknya berkisar antara 750 hingga 1.200 cc, dengan ciri dahi miring ke belakang dan alis yang tebal dan menonjol. Homo erectus telah mampu menggunakan alat batu sederhana, menguasai api untuk memasak dan perlindungan, serta hidup berkelompok. Mereka biasanya tinggal di gua atau daerah terbuka yang dekat dengan sumber air."
+            }
+        };
+
+        // Populate side panel with marker data
+        function populateSidePanel() {
+            if (markerId && markerDataDetail[markerId]) {
+                const data = markerDataDetail[markerId];
+                
+                // Set title and era
+                document.getElementById('panel-title').textContent = data.name;
+                document.getElementById('panel-era').textContent = data.era;
+                
+                // Build info items based on available data
+                const infoSection = document.getElementById('info-section');
+                infoSection.innerHTML = '';
+                
+                // Periode
+                if (data.periode) {
+                    infoSection.innerHTML += createInfoItem('⏰', 'Periode', data.periode);
+                }
+                
+                // Tahun Penemuan
+                if (data.tahunPenemuan) {
+                    infoSection.innerHTML += createInfoItem('📅', 'Tahun Penemuan', data.tahunPenemuan);
+                }
+                
+                // Penemu
+                if (data.penemu) {
+                    infoSection.innerHTML += createInfoItem('👤', 'Penemu', data.penemu);
+                }
+                
+                // Lokasi Penemuan
+                if (data.lokasiPenemuan) {
+                    infoSection.innerHTML += createInfoItem('📍', 'Lokasi Penemuan', data.lokasiPenemuan);
+                }
+                
+                // Tinggi
+                if (data.tinggi) {
+                    infoSection.innerHTML += createInfoItem('📏', 'Tinggi Badan', data.tinggi);
+                }
+                
+                // Volume Otak
+                if (data.volumeOtak) {
+                    infoSection.innerHTML += createInfoItem('🧠', 'Volume Otak', data.volumeOtak);
+                }
+                
+                // Ciri Khas
+                if (data.ciri) {
+                    infoSection.innerHTML += createInfoItem('✨', 'Ciri Khas', data.ciri);
+                }
+                
+                // Description
+                document.getElementById('description-text').textContent = data.description;
+            }
+        }
+
+        // Helper function to create info item HTML
+        function createInfoItem(icon, label, value) {
+            return `
+                <div class="info-item">
+                    <div class="info-icon">${icon}</div>
+                    <div class="info-content">
+                        <div class="info-label">${label}</div>
+                        <div class="info-value">${value}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Populate panel on load
+        populateSidePanel();
 
         // Three.js variables
         let scene, camera, renderer, model, controls;
@@ -395,11 +646,12 @@
 
             // Create renderer
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            const container = document.getElementById('canvas-container');
+            renderer.setSize(container.clientWidth, container.clientHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            document.getElementById('canvas-container').appendChild(renderer.domElement);
+            container.appendChild(renderer.domElement);
 
             // Add lights
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -593,9 +845,10 @@
         }
 
         function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
+            const container = document.getElementById('canvas-container');
+            camera.aspect = container.clientWidth / container.clientHeight;
             camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setSize(container.clientWidth, container.clientHeight);
         }
 
         function hideLoading() {
