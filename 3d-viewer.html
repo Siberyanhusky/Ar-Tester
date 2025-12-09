@@ -7,6 +7,7 @@
     
     <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     
     <style>
         * {
@@ -22,6 +23,7 @@
             color: white;
         }
 
+        /* Canvas Container */
         #canvas-container {
             width: 70vw;
             height: 100vh;
@@ -29,6 +31,7 @@
             float: left;
         }
 
+        /* Side Panel */
         #side-panel {
             width: 30vw;
             height: 100vh;
@@ -132,6 +135,7 @@
             text-align: justify;
         }
 
+        /* Loading Screen */
         #loading-screen {
             position: fixed;
             top: 0;
@@ -178,6 +182,7 @@
             opacity: 0.9;
         }
 
+        /* Header */
         #header {
             position: fixed;
             top: 0;
@@ -231,6 +236,7 @@
             margin-left: 10px;
         }
 
+        /* Controls Info */
         #controls-info {
             position: fixed;
             bottom: 20px;
@@ -247,13 +253,6 @@
             flex-wrap: wrap;
             justify-content: center;
             max-width: 90%;
-            transition: all 0.4s ease;
-        }
-
-        #controls-info.hidden {
-            opacity: 0;
-            transform: translateX(-50%) translateY(20px);
-            pointer-events: none;
         }
 
         .control-item {
@@ -291,8 +290,10 @@
             font-size: 14px;
         }
 
-        #reset-button, #toggle-controls, #quality-toggle {
+        /* Reset Button */
+        #reset-button {
             position: fixed;
+            top: 90px;
             right: 20px;
             background: rgba(139, 92, 246, 0.9);
             color: white;
@@ -305,30 +306,15 @@
             box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
             transition: all 0.3s ease;
             z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        #reset-button { top: 90px; }
-        #quality-toggle { top: 150px; }
-        #toggle-controls { bottom: 90px; }
-
-        #reset-button:hover, #toggle-controls:hover, #quality-toggle:hover {
+        #reset-button:hover {
+            background: rgba(139, 92, 246, 1);
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(139, 92, 246, 0.6);
         }
 
-        #quality-toggle.mode-high {
-            background: rgba(34, 197, 94, 0.9);
-            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.4);
-        }
-
-        #quality-toggle.mode-low {
-            background: rgba(249, 115, 22, 0.9);
-            box-shadow: 0 5px 15px rgba(249, 115, 22, 0.4);
-        }
-
+        /* Error Message */
         #error-message {
             position: fixed;
             top: 50%;
@@ -364,6 +350,7 @@
             opacity: 0.9;
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
             #canvas-container {
                 width: 100vw;
@@ -379,34 +366,90 @@
                 right: 0;
                 top: auto;
                 padding: 20px;
+                box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
             }
 
-            #reset-button, #quality-toggle, #toggle-controls {
+            .panel-title {
+                font-size: 20px;
+            }
+
+            .info-item {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+
+            .info-icon {
+                width: 30px;
+                height: 30px;
+                min-width: 30px;
+                font-size: 16px;
+            }
+
+            .info-value {
+                font-size: 13px;
+            }
+
+            .description-text {
+                font-size: 13px;
+            }
+
+            #header {
+                padding: 15px;
+            }
+
+            #model-title {
+                font-size: 16px;
+            }
+
+            .title-badge {
+                font-size: 10px;
+                padding: 3px 10px;
+            }
+
+            #controls-info {
+                padding: 12px 20px;
+                gap: 15px;
+                bottom: 10px;
+            }
+
+            .control-item {
+                font-size: 11px;
+            }
+
+            .control-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 16px;
+            }
+
+            #reset-button {
+                top: auto;
+                bottom: 100px;
+                right: 15px;
                 padding: 10px 20px;
                 font-size: 12px;
-            }
-
-            #toggle-controls {
-                bottom: 60px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
     <div id="loading-screen">
         <div class="spinner"></div>
         <div class="loading-text">Memuat Model 3D...</div>
         <div class="loading-progress" id="loading-progress">0%</div>
     </div>
 
+    <!-- Error Message -->
     <div id="error-message">
         <div class="error-icon">⚠️</div>
         <div class="error-title">Gagal Memuat Model</div>
-        <div class="error-desc" id="error-desc">Model 3D tidak ditemukan atau format tidak didukung.</div>
+        <div class="error-desc">Model 3D tidak ditemukan atau format tidak didukung.</div>
     </div>
 
+    <!-- Header -->
     <div id="header">
-        <a href="#" id="back-button">
+        <a href="ar-viewer.html" id="back-button">
             <span>←</span>
             <span>Kembali</span>
         </a>
@@ -414,19 +457,13 @@
             <span id="model-name">Model 3D</span>
             <span class="title-badge">Interactive Viewer</span>
         </div>
-        <div style="width: 100px;"></div>
+        <div style="width: 100px;"></div> <!-- Spacer untuk center title -->
     </div>
 
-    <button id="reset-button">🔄 Reset View</button>
-    <button id="quality-toggle">
-        <span id="quality-icon">⭐</span>
-        <span id="quality-text">Grafis: HIGH</span>
-    </button>
-    <button id="toggle-controls">
-        <span id="toggle-icon">👁️</span>
-        <span id="toggle-text">Sembunyikan Kontrol</span>
-    </button>
+    <!-- Reset Button -->
+    <button id="reset-button" onclick="resetCamera()">🔄 Reset View</button>
 
+    <!-- Controls Info -->
     <div id="controls-info">
         <div class="control-item">
             <div class="control-icon">🖱️</div>
@@ -451,19 +488,24 @@
         </div>
     </div>
 
+    <!-- Canvas Container -->
     <div id="canvas-container"></div>
 
+    <!-- Side Panel -->
     <div id="side-panel">
-        <h1 class="panel-title" id="panel-title">Demo Model 3D</h1>
-        <span class="panel-era" id="panel-era">Interactive Viewer</span>
+        <h1 class="panel-title" id="panel-title">Homo Erectus</h1>
+        <span class="panel-era" id="panel-era">Pleistosen Tengah</span>
 
-        <div class="info-section" id="info-section"></div>
+        <div class="info-section" id="info-section">
+            <!-- Info items will be dynamically populated -->
+        </div>
 
         <div class="description-section">
-            <div class="description-title">📖 Deskripsi Lengkap</div>
+            <div class="description-title">
+                📖 Deskripsi Lengkap
+            </div>
             <div class="description-text" id="description-text">
-                Gunakan mouse atau sentuhan untuk memutar dan memperbesar model 3D. 
-                Model ini menampilkan objek bersejarah Indonesia dalam format interaktif.
+                Loading...
             </div>
         </div>
     </div>
@@ -472,12 +514,13 @@
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const modelPath = urlParams.get('model');
-        const modelName = urlParams.get('name') || 'Demo Model 3D';
+        const modelName = urlParams.get('name') || 'Model 3D';
         const markerId = urlParams.get('marker');
 
+        // Set model name in header
         document.getElementById('model-name').textContent = modelName;
 
-        // Marker data
+        // Marker data (harus sama dengan ar-viewer.html)
         const markerDataDetail = {
             0: {
                 name: "Prasasti Ciaruteun",
@@ -571,7 +614,7 @@
             }
         };
 
-         // Populate side panel with marker data
+        // Populate side panel with marker data
         function populateSidePanel() {
             if (markerId && markerDataDetail[markerId]) {
                 const data = markerDataDetail[markerId];
@@ -679,59 +722,32 @@
 
         // Populate panel on load
         populateSidePanel();
-        
+
         // Three.js variables
-        let scene, camera, renderer, model;
+        let scene, camera, renderer, model, controls;
         let isDragging = false;
         let previousMousePosition = { x: 0, y: 0 };
         let rotation = { x: 0, y: 0 };
         let targetRotation = { x: 0, y: 0 };
         let cameraDistance = 5;
         let targetCameraDistance = 5;
-        let currentQuality = 'HIGH';
-        let controlsVisible = true;
 
-        // GLTFLoader definition (karena tidak bisa diimport dari CDN eksternal)
-        THREE.GLTFLoader = function() {
-            this.manager = THREE.DefaultLoadingManager;
-        };
+        // Touch variables
+        let touchStartDistance = 0;
+        let lastTouchX = 0;
+        let lastTouchY = 0;
 
-        THREE.GLTFLoader.prototype = {
-            load: function(url, onLoad, onProgress, onError) {
-                const scope = this;
-                const loader = new THREE.FileLoader(scope.manager);
-                loader.setResponseType('arraybuffer');
-                
-                loader.load(url, function(data) {
-                    try {
-                        scope.parse(data, '', onLoad, onError);
-                    } catch(e) {
-                        if(onError) onError(e);
-                    }
-                }, onProgress, onError);
-            },
-            
-            parse: function(data, path, onLoad, onError) {
-                // Simplified GLTF parser - untuk demo, kita buat simple cube
-                const geometry = new THREE.BoxGeometry(1, 1, 1);
-                const material = new THREE.MeshStandardMaterial({ 
-                    color: 0x8b5cf6,
-                    metalness: 0.3,
-                    roughness: 0.7
-                });
-                const mesh = new THREE.Mesh(geometry, material);
-                
-                const scene = new THREE.Group();
-                scene.add(mesh);
-                
-                onLoad({ scene: scene });
-            }
-        };
-
+        // Initialize
         init();
         animate();
 
         function init() {
+            // Check if model path exists
+            if (!modelPath) {
+                showError();
+                return;
+            }
+
             // Create scene
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x1e1e2e);
@@ -750,8 +766,9 @@
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             const container = document.getElementById('canvas-container');
             renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setPixelRatio(window.devicePixelRatio);
             renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             container.appendChild(renderer.domElement);
 
             // Add lights
@@ -767,68 +784,78 @@
             directionalLight2.position.set(-5, 3, -5);
             scene.add(directionalLight2);
 
-            // Add grid
+            const pointLight = new THREE.PointLight(0x8b5cf6, 0.5, 10);
+            pointLight.position.set(0, 3, 0);
+            scene.add(pointLight);
+
+            // Add grid helper (optional)
             const gridHelper = new THREE.GridHelper(10, 10, 0x444444, 0x222222);
             gridHelper.position.y = -0.5;
             scene.add(gridHelper);
 
-            // Load model
-            loadModel();
-            
-            // Populate side panel
-            populateSidePanel();
+            // Load 3D model
+            loadModel(modelPath);
 
             // Event listeners
             window.addEventListener('resize', onWindowResize);
             setupMouseControls();
             setupTouchControls();
-            
-            // Button events
-            document.getElementById('reset-button').addEventListener('click', resetCamera);
-            document.getElementById('quality-toggle').addEventListener('click', toggleQuality);
-            document.getElementById('toggle-controls').addEventListener('click', toggleControls);
         }
 
-        function loadModel() {
-            // Create demo model (cube with better appearance)
-            const geometry = new THREE.BoxGeometry(2, 2, 2);
-            const material = new THREE.MeshStandardMaterial({ 
-                color: 0x8b5cf6,
-                metalness: 0.3,
-                roughness: 0.4
-            });
-            model = new THREE.Mesh(geometry, material);
-            model.position.y = 1;
-            model.castShadow = true;
-            model.receiveShadow = true;
+        function loadModel(path) {
+            const loader = new THREE.GLTFLoader();
             
-            scene.add(model);
-            
-            // Simulate loading progress
-            let progress = 0;
-            const progressInterval = setInterval(() => {
-                progress += 10;
-                document.getElementById('loading-progress').textContent = progress + '%';
-                
-                if (progress >= 100) {
-                    clearInterval(progressInterval);
-                    setTimeout(() => {
-                        hideLoading();
-                    }, 300);
+            loader.load(
+                path,
+                function(gltf) {
+                    model = gltf.scene;
+                    
+                    // Center and scale model
+                    const box = new THREE.Box3().setFromObject(model);
+                    const center = box.getCenter(new THREE.Vector3());
+                    const size = box.getSize(new THREE.Vector3());
+                    
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const scale = 2 / maxDim;
+                    model.scale.multiplyScalar(scale);
+                    
+                    model.position.sub(center.multiplyScalar(scale));
+                    model.position.y += 1;
+                    
+                    // Enable shadows
+                    model.traverse((child) => {
+                        if (child.isMesh) {
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                        }
+                    });
+                    
+                    scene.add(model);
+                    hideLoading();
+                },
+                function(xhr) {
+                    const progress = (xhr.loaded / xhr.total * 100).toFixed(0);
+                    document.getElementById('loading-progress').textContent = progress + '%';
+                },
+                function(error) {
+                    console.error('Error loading model:', error);
+                    showError();
                 }
-            }, 100);
+            );
         }
 
         function setupMouseControls() {
             const canvas = renderer.domElement;
 
+            // Mouse down
             canvas.addEventListener('mousedown', (e) => {
-                if (e.button === 0) {
+                if (e.button === 0) { // Left click only
                     isDragging = true;
                     previousMousePosition = { x: e.clientX, y: e.clientY };
                 }
             });
 
+            // Mouse move
             canvas.addEventListener('mousemove', (e) => {
                 if (isDragging && model) {
                     const deltaX = e.clientX - previousMousePosition.x;
@@ -836,15 +863,24 @@
                     
                     targetRotation.y += deltaX * 0.01;
                     targetRotation.x += deltaY * 0.01;
+                    
+                    // Limit vertical rotation
                     targetRotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, targetRotation.x));
                     
                     previousMousePosition = { x: e.clientX, y: e.clientY };
                 }
             });
 
-            canvas.addEventListener('mouseup', () => { isDragging = false; });
-            canvas.addEventListener('mouseleave', () => { isDragging = false; });
+            // Mouse up
+            canvas.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
 
+            canvas.addEventListener('mouseleave', () => {
+                isDragging = false;
+            });
+
+            // Mouse wheel for zoom
             canvas.addEventListener('wheel', (e) => {
                 e.preventDefault();
                 targetCameraDistance += e.deltaY * 0.01;
@@ -854,16 +890,15 @@
 
         function setupTouchControls() {
             const canvas = renderer.domElement;
-            let touchStartDistance = 0;
-            let lastTouchX = 0;
-            let lastTouchY = 0;
 
             canvas.addEventListener('touchstart', (e) => {
                 if (e.touches.length === 1) {
+                    // Single touch - rotate
                     lastTouchX = e.touches[0].clientX;
                     lastTouchY = e.touches[0].clientY;
                     isDragging = true;
                 } else if (e.touches.length === 2) {
+                    // Two touches - zoom
                     const dx = e.touches[0].clientX - e.touches[1].clientX;
                     const dy = e.touches[0].clientY - e.touches[1].clientY;
                     touchStartDistance = Math.sqrt(dx * dx + dy * dy);
@@ -874,6 +909,7 @@
                 e.preventDefault();
                 
                 if (e.touches.length === 1 && isDragging && model) {
+                    // Rotate
                     const deltaX = e.touches[0].clientX - lastTouchX;
                     const deltaY = e.touches[0].clientY - lastTouchY;
                     
@@ -884,6 +920,7 @@
                     lastTouchX = e.touches[0].clientX;
                     lastTouchY = e.touches[0].clientY;
                 } else if (e.touches.length === 2) {
+                    // Zoom
                     const dx = e.touches[0].clientX - e.touches[1].clientX;
                     const dy = e.touches[0].clientY - e.touches[1].clientY;
                     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -896,13 +933,16 @@
                 }
             });
 
-            canvas.addEventListener('touchend', () => { isDragging = false; });
+            canvas.addEventListener('touchend', () => {
+                isDragging = false;
+            });
         }
 
         function animate() {
             requestAnimationFrame(animate);
 
             if (model) {
+                // Smooth rotation
                 rotation.x += (targetRotation.x - rotation.x) * 0.1;
                 rotation.y += (targetRotation.y - rotation.y) * 0.1;
                 
@@ -910,6 +950,7 @@
                 model.rotation.y = rotation.y;
             }
 
+            // Smooth zoom
             cameraDistance += (targetCameraDistance - cameraDistance) * 0.1;
             camera.position.z = cameraDistance;
 
@@ -921,45 +962,6 @@
             targetCameraDistance = 5;
         }
 
-        function toggleQuality() {
-            currentQuality = currentQuality === 'HIGH' ? 'LOW' : 'HIGH';
-            const button = document.getElementById('quality-toggle');
-            const icon = document.getElementById('quality-icon');
-            const text = document.getElementById('quality-text');
-            
-            if (currentQuality === 'HIGH') {
-                button.classList.remove('mode-low');
-                button.classList.add('mode-high');
-                icon.textContent = '⭐';
-                text.textContent = 'Grafis: HIGH';
-                renderer.shadowMap.enabled = true;
-            } else {
-                button.classList.remove('mode-high');
-                button.classList.add('mode-low');
-                icon.textContent = '⚡';
-                text.textContent = 'Grafis: LOW';
-                renderer.shadowMap.enabled = false;
-            }
-        }
-
-        function toggleControls() {
-            const controlsInfo = document.getElementById('controls-info');
-            const toggleIcon = document.getElementById('toggle-icon');
-            const toggleText = document.getElementById('toggle-text');
-            
-            controlsVisible = !controlsVisible;
-            
-            if (controlsVisible) {
-                controlsInfo.classList.remove('hidden');
-                toggleIcon.textContent = '👁️';
-                toggleText.textContent = 'Sembunyikan Kontrol';
-            } else {
-                controlsInfo.classList.add('hidden');
-                toggleIcon.textContent = '👁️‍🗨️';
-                toggleText.textContent = 'Tampilkan Kontrol';
-            }
-        }
-
         function onWindowResize() {
             const container = document.getElementById('canvas-container');
             camera.aspect = container.clientWidth / container.clientHeight;
@@ -968,119 +970,17 @@
         }
 
         function hideLoading() {
+            const loading = document.getElementById('loading-screen');
+            loading.classList.add('hidden');
+        }
+
+        function showError() {
             document.getElementById('loading-screen').classList.add('hidden');
+            document.getElementById('error-message').classList.add('show');
         }
 
-        // Populate side panel with marker data
-        function populateSidePanel() {
-            if (markerId && markerDataDetail[markerId]) {
-                const data = markerDataDetail[markerId];
-                
-                // Set title and era
-                document.getElementById('panel-title').textContent = data.name;
-                document.getElementById('panel-era').textContent = data.era;
-                
-                // Build info items based on available data
-                const infoSection = document.getElementById('info-section');
-                infoSection.innerHTML = '';
-                
-                // Periode
-                if (data.periode) {
-                    infoSection.innerHTML += createInfoItem('⏰', 'Periode', data.periode);
-                }
-                
-                // PRASASTI (Marker 0)
-                if (data.type === 'prasasti') {
-                    if (data.lokasiPenemuan) {
-                        infoSection.innerHTML += createInfoItem('📍', 'Lokasi', data.lokasiPenemuan);
-                    }
-                    if (data.aksara) {
-                        infoSection.innerHTML += createInfoItem('✍️', 'Aksara', data.aksara);
-                    }
-                    if (data.bahasa) {
-                        infoSection.innerHTML += createInfoItem('🗣️', 'Bahasa', data.bahasa);
-                    }
-                    if (data.ciriKhas) {
-                        infoSection.innerHTML += createInfoItem('✨', 'Ciri Khas', data.ciriKhas);
-                    }
-                }
-                
-                // ARTEFAK (Marker 1, 2)
-                if (data.type === 'artefak') {
-                    if (data.teknik) {
-                        infoSection.innerHTML += createInfoItem('🔨', 'Teknik Pembuatan', data.teknik);
-                    }
-                    if (data.fungsi) {
-                        infoSection.innerHTML += createInfoItem('⚙️', 'Fungsi', data.fungsi);
-                    }
-                    if (data.lokasiPenemuan) {
-                        infoSection.innerHTML += createInfoItem('📍', 'Lokasi Penemuan', data.lokasiPenemuan);
-                    }
-                    if (data.pengguna) {
-                        infoSection.innerHTML += createInfoItem('👤', 'Pengguna', data.pengguna);
-                    }
-                    if (data.ciriKhas) {
-                        infoSection.innerHTML += createInfoItem('✨', 'Ciri Khas', data.ciriKhas);
-                    }
-                }
-                
-                // FOSSIL (Marker 3, 4)
-                if (data.type === 'fossil') {
-                    if (data.tahunPenemuan) {
-                        infoSection.innerHTML += createInfoItem('📅', 'Tahun Penemuan', data.tahunPenemuan);
-                    }
-                    if (data.penemu) {
-                        infoSection.innerHTML += createInfoItem('👤', 'Penemu', data.penemu);
-                    }
-                    if (data.lokasiPenemuan) {
-                        infoSection.innerHTML += createInfoItem('📍', 'Lokasi Penemuan', data.lokasiPenemuan);
-                    }
-                    if (data.tinggi) {
-                        infoSection.innerHTML += createInfoItem('📏', 'Tinggi Badan', data.tinggi);
-                    }
-                    if (data.volumeOtak) {
-                        infoSection.innerHTML += createInfoItem('🧠', 'Volume Otak', data.volumeOtak);
-                    }
-                    if (data.ciri) {
-                        infoSection.innerHTML += createInfoItem('✨', 'Ciri Khas', data.ciri);
-                    }
-                }
-                
-                // STRUKTUR (Marker 5, 6, 7)
-                if (data.type === 'struktur') {
-                    if (data.fungsi) {
-                        infoSection.innerHTML += createInfoItem('⚙️', 'Fungsi', data.fungsi);
-                    }
-                    if (data.lokasiPenemuan) {
-                        infoSection.innerHTML += createInfoItem('📍', 'Lokasi', data.lokasiPenemuan);
-                    }
-                    if (data.ciriKhas) {
-                        infoSection.innerHTML += createInfoItem('✨', 'Ciri Khas', data.ciriKhas);
-                    }
-                }
-                
-                // Description
-                document.getElementById('description-text').textContent = data.description;
-            } else {
-                // Default demo data jika tidak ada marker ID
-                document.getElementById('panel-title').textContent = 'Demo Model 3D';
-                document.getElementById('panel-era').textContent = 'Interactive Viewer';
-                document.getElementById('description-text').textContent = 'Gunakan mouse atau sentuhan untuk memutar dan memperbesar model 3D. Model ini menampilkan objek bersejarah Indonesia dalam format interaktif.';
-            }
-        }
-
-        // Helper function to create info item HTML
-        function createInfoItem(icon, label, value) {
-            return `
-                <div class="info-item">
-                    <div class="info-icon">${icon}</div>
-                    <div class="info-content">
-                        <div class="info-label">${label}</div>
-                        <div class="info-value">${value}</div>
-                    </div>
-                </div>
-            `;
-        }
+        // Debug: Log model path
+        console.log('Loading model from:', modelPath);
     </script>
 </body>
 </html>
