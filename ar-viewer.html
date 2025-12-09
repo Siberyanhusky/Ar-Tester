@@ -930,6 +930,7 @@
             document.body.appendChild(popup);
 
             // Aksi tombol
+            const lowModel = data.modelPath.replace('.glb', '-low.glb');
             document.getElementById('btn-low').addEventListener('click', () => {
                 const lowModel = data.modelPath.replace('.glb', '-low.glb');
                 window.location.href = `3d-viewer.html?model=${encodeURIComponent(lowModel)}&name=${encodeURIComponent(data.name)}&marker=${markerId}&quality=low`;
