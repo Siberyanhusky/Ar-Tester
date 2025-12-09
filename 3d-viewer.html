@@ -591,11 +591,26 @@
         if (quality === 'low' && modelPath && !modelPath.includes('-low')) {
             modelPath = modelPath.replace('.glb', '-low.glb');
         }
+
+        // 🔹 Deteksi kualitas (default: high)
+        const quality = urlParams.get('quality') || 'high';
+        console.log(`Mode Viewer: ${quality}`);
+        
+        // 🔹 Tambahkan indikator mode di judul
+        const titleBadge = document.querySelector('.title-badge');
+        if (quality === 'low') {
+            titleBadge.textContent = 'Low Performance Mode ⚡';
+            titleBadge.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+        } else {
+            titleBadge.textContent = 'High Quality Mode ✨';
+        }
+        
+        // 🔹 Flag global supaya bisa dipakai di init()
+        window.isLowQualityMode = (quality === 'low');
         
         // Debug info
         console.log("Kualitas model:", quality);
         console.log("Path akhir yang digunakan:", modelPath);
-
 
         // Set model name in header
         document.getElementById('model-name').textContent = modelName;
@@ -843,13 +858,26 @@
             camera.lookAt(0, 1, 0);
 
             // Create renderer
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            const container = document.getElementById('canvas-container');
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            container.appendChild(renderer.domElement);
+            renderer = new THREE.WebGLRenderer({ 
+            antialias: !window.isLowQualityMode, // matikan antialias di low mode
+            alpha: true 
+        });
+        
+        const container = document.getElementById('canvas-container');
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        
+        // 🔹 Batasi pixel ratio di HP low-end
+        if (window.isLowQualityMode) {
+            renderer.setPixelRatio(1.0);
+        } else {
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        }
+        
+        // 🔹 Mode hemat GPU
+        renderer.shadowMap.enabled = !window.isLowQualityMode;
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        container.appendChild(renderer.domElement);
+
 
             // Add lights
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -867,6 +895,24 @@
             const pointLight = new THREE.PointLight(0x8b5cf6, 0.5, 10);
             pointLight.position.set(0, 3, 0);
             scene.add(pointLight);
+
+            // 🌿 Mode Hemat GPU (Low Quality Mode)
+            if (window.isLowQualityMode) {
+                console.log("🟢 Mode Hemat GPU aktif: Mengurangi efek berat.");
+            
+                // Kurangi intensitas lampu untuk hemat GPU
+                ambientLight.intensity = 0.3;
+                directionalLight1.intensity = 0.25;
+                directionalLight2.intensity = 0.2;
+                pointLight.intensity = 0.2;
+            
+                // Nonaktifkan bayangan dan efek berat
+                directionalLight1.castShadow = false;
+                renderer.shadowMap.enabled = false;
+            
+                // Sembunyikan grid helper (jika ada)
+                console.log("Grid Helper dinonaktifkan di mode hemat GPU.");
+            }
 
             // Add grid helper (optional)
             const gridHelper = new THREE.GridHelper(10, 10, 0x444444, 0x222222);
