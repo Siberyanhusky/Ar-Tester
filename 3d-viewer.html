@@ -571,6 +571,115 @@
             }
         };
 
+         // Populate side panel with marker data
+        function populateSidePanel() {
+            if (markerId && markerDataDetail[markerId]) {
+                const data = markerDataDetail[markerId];
+                
+                // Set title and era
+                document.getElementById('panel-title').textContent = data.name;
+                document.getElementById('panel-era').textContent = data.era;
+                
+                // Build info items based on available data
+                const infoSection = document.getElementById('info-section');
+                infoSection.innerHTML = '';
+                
+                // Periode
+                if (data.periode) {
+                    infoSection.innerHTML += createInfoItem('⏰', 'Periode', data.periode);
+                }
+                
+                // PRASASTI (Marker 0)
+                if (data.type === 'prasasti') {
+                    if (data.lokasiPenemuan) {
+                        infoSection.innerHTML += createInfoItem('📍', 'Lokasi', data.lokasiPenemuan);
+                    }
+                    if (data.aksara) {
+                        infoSection.innerHTML += createInfoItem('✍️', 'Aksara', data.aksara);
+                    }
+                    if (data.bahasa) {
+                        infoSection.innerHTML += createInfoItem('🗣️', 'Bahasa', data.bahasa);
+                    }
+                    if (data.ciriKhas) {
+                        infoSection.innerHTML += createInfoItem('✨', 'Ciri Khas', data.ciriKhas);
+                    }
+                }
+                
+                // ARTEFAK (Marker 1, 2)
+                if (data.type === 'artefak') {
+                    if (data.teknik) {
+                        infoSection.innerHTML += createInfoItem('🔨', 'Teknik Pembuatan', data.teknik);
+                    }
+                    if (data.fungsi) {
+                        infoSection.innerHTML += createInfoItem('⚙️', 'Fungsi', data.fungsi);
+                    }
+                    if (data.lokasiPenemuan) {
+                        infoSection.innerHTML += createInfoItem('📍', 'Lokasi Penemuan', data.lokasiPenemuan);
+                    }
+                    if (data.pengguna) {
+                        infoSection.innerHTML += createInfoItem('👤', 'Pengguna', data.pengguna);
+                    }
+                    if (data.ciriKhas) {
+                        infoSection.innerHTML += createInfoItem('✨', 'Ciri Khas', data.ciriKhas);
+                    }
+                }
+                
+                // FOSSIL (Marker 3, 4)
+                if (data.type === 'fossil') {
+                    if (data.tahunPenemuan) {
+                        infoSection.innerHTML += createInfoItem('📅', 'Tahun Penemuan', data.tahunPenemuan);
+                    }
+                    if (data.penemu) {
+                        infoSection.innerHTML += createInfoItem('👤', 'Penemu', data.penemu);
+                    }
+                    if (data.lokasiPenemuan) {
+                        infoSection.innerHTML += createInfoItem('📍', 'Lokasi Penemuan', data.lokasiPenemuan);
+                    }
+                    if (data.tinggi) {
+                        infoSection.innerHTML += createInfoItem('📏', 'Tinggi Badan', data.tinggi);
+                    }
+                    if (data.volumeOtak) {
+                        infoSection.innerHTML += createInfoItem('🧠', 'Volume Otak', data.volumeOtak);
+                    }
+                    if (data.ciri) {
+                        infoSection.innerHTML += createInfoItem('✨', 'Ciri Khas', data.ciri);
+                    }
+                }
+                
+                // STRUKTUR (Marker 5, 6, 7)
+                if (data.type === 'struktur') {
+                    if (data.fungsi) {
+                        infoSection.innerHTML += createInfoItem('⚙️', 'Fungsi', data.fungsi);
+                    }
+                    if (data.lokasiPenemuan) {
+                        infoSection.innerHTML += createInfoItem('📍', 'Lokasi', data.lokasiPenemuan);
+                    }
+                    if (data.ciriKhas) {
+                        infoSection.innerHTML += createInfoItem('✨', 'Ciri Khas', data.ciriKhas);
+                    }
+                }
+                
+                // Description
+                document.getElementById('description-text').textContent = data.description;
+            }
+        }
+
+        // Helper function to create info item HTML
+        function createInfoItem(icon, label, value) {
+            return `
+                <div class="info-item">
+                    <div class="info-icon">${icon}</div>
+                    <div class="info-content">
+                        <div class="info-label">${label}</div>
+                        <div class="info-value">${value}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Populate panel on load
+        populateSidePanel();
+        
         // Three.js variables
         let scene, camera, renderer, model;
         let isDragging = false;
