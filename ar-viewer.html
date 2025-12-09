@@ -316,17 +316,6 @@
             color: #667eea;
         }
 
-        .model-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
-            color: white;
-            padding: 6px 15px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-
         .modal-footer {
             margin-top: 25px;
             text-align: center;
@@ -370,32 +359,6 @@
             box-shadow: 0 15px 40px rgba(16, 185, 129, 0.6);
         }
 
-        /* 3D Viewer Button */
-        .viewer-button {
-            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
-            color: white;
-            border: none;
-            padding: 15px 35px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
-            transition: all 0.3s ease;
-            margin-top: 15px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .viewer-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.6);
-        }
-
-        .viewer-button:active {
-            transform: translateY(0);
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
             .modal-content {
@@ -414,6 +377,23 @@
             #instructions {
                 font-size: 12px;
                 padding: 10px 20px;
+            }
+
+            #ar-info-card {
+                width: 90%;
+                padding: 18px 20px;
+            }
+
+            .ar-card-title {
+                font-size: 18px;
+            }
+
+            .ar-card-era {
+                font-size: 12px;
+            }
+
+            .ar-card-period {
+                font-size: 11px;
             }
         }
 
@@ -437,7 +417,7 @@
 
     <!-- Instructions -->
     <div id="instructions">
-        📷 Arahkan kamera ke barcode marker (0-9) • ✨ Marker 1, 3, 7 = 3D Model
+        📷 Arahkan kamera ke barcode marker (0-9)
     </div>
 
     <!-- Marker Status -->
@@ -445,32 +425,28 @@
         ✓ Marker Terdeteksi: <span id="marker-name">-</span>
     </div>
 
-    <!-- AR Info Card (Bottom Card for non-modal markers) -->
+    <!-- AR Info Card (untuk marker 0-7) -->
     <div id="ar-info-card">
-        <div class="ar-card-title" id="ar-card-title">Homo Erectus</div>
-        <div class="ar-card-era" id="ar-card-era">Pleistosen Tengah</div>
-        <div class="ar-card-period" id="ar-card-period">1,5 juta - 300 ribu tahun lalu</div>
-        <button class="ar-card-button" id="ar-card-button" onclick="openFromARCard()">
+        <div class="ar-card-title" id="ar-card-title">Objek Sejarah</div>
+        <div class="ar-card-era" id="ar-card-era">Era</div>
+        <div class="ar-card-period" id="ar-card-period">Periode</div>
+        <button class="ar-card-button" onclick="openFromARCard()">
             🔍 Lihat Model 3D Interaktif
         </button>
     </div>
 
-    <!-- Info Modal -->
+    <!-- Info Modal (untuk marker 8-9 Virtual Tour) -->
     <div id="info-modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title" id="modal-title">Judul Objek</h2>
                 <span class="modal-era" id="modal-era">Era</span>
-                <div id="model-badge-container"></div>
             </div>
             <div class="modal-body" id="modal-body">
                 <p>Loading...</p>
             </div>
             <div class="modal-footer">
                 <button class="btn-close" onclick="closeModal()">Tutup</button>
-                <button class="viewer-button" id="viewer-button" style="display:none;" onclick="open3DViewer()">
-                    🔍 Lihat Model 3D Interaktif
-                </button>
                 <button class="tour-button" id="tour-button" style="display:none;" onclick="startTour()">
                     🎥 Mulai Virtual Tour
                 </button>
@@ -491,7 +467,7 @@
             <a-entity light="type: directional; intensity: 0.8;" position="1 1 1"></a-entity>
         </a-entity>
 
-        <!-- Marker 0: Prasasti Ciaruteun (2D Image) -->
+        <!-- Marker 0: Prasasti Ciaruteun (2D Image in AR) -->
         <a-marker type="barcode" value="0" id="marker-0">
             <a-image 
                 src="assets/images/artifacts/ciaruteun.png" 
@@ -500,26 +476,24 @@
                 position="0 0.6 0"
                 rotation="-90 0 0"
                 transparent="true"
-                shader="flat"
-                animation="property: rotation; to: -90 360 0; loop: true; dur: 20000; easing: linear">
+                shader="flat">
             </a-image>
         </a-marker>
 
-        <!-- Marker 1: Kapak Genggam (3D MODEL) ⭐ -->
+        <!-- Marker 1: Kapak Genggam (2D Image in AR) -->
         <a-marker type="barcode" value="1" id="marker-1">
-            <a-entity 
-                gltf-model="assets/images/artifacts/kapak-genggam.glb"
-                scale="0.3 0.3 0.3"
-                position="0 0.3 0"
-                rotation="0 0 0"
-                animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear"
-                animation__float="property: position; to: 0 0.4 0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
-            </a-entity>
-            <!-- Ambient lighting untuk 3D model -->
-            <a-entity light="type: point; intensity: 0.8; distance: 3;" position="0 1 0"></a-entity>
+            <a-image 
+                src="assets/images/artifacts/kapak-genggam.png" 
+                width="0.9" 
+                height="0.6" 
+                position="0 0.4 0"
+                rotation="-90 0 0"
+                transparent="true"
+                shader="flat">
+            </a-image>
         </a-marker>
 
-        <!-- Marker 2: Kapak Lonjong (2D Image) -->
+        <!-- Marker 2: Kapak Lonjong (2D Image in AR) -->
         <a-marker type="barcode" value="2" id="marker-2">
             <a-image 
                 src="assets/images/artifacts/kapak-lonjong.png" 
@@ -528,14 +502,12 @@
                 position="0 0.4 0"
                 rotation="-90 0 0"
                 transparent="true"
-                shader="flat"
-                animation="property: position; to: 0 0.5 0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
+                shader="flat">
             </a-image>
         </a-marker>
 
-        <!-- Marker 3: Homo Erectus (2D IMAGE in AR, 3D in Viewer) ⭐ -->
+        <!-- Marker 3: Homo Erectus (2D Image in AR) -->
         <a-marker type="barcode" value="3" id="marker-3">
-            <!-- Pakai PNG di AR (bukan 3D model) -->
             <a-image 
                 src="assets/images/fossils/homo-erectus.png" 
                 width="0.6" 
@@ -547,7 +519,7 @@
             </a-image>
         </a-marker>
 
-        <!-- Marker 4: Meganthropus (2D Image) -->
+        <!-- Marker 4: Meganthropus (2D Image in AR) -->
         <a-marker type="barcode" value="4" id="marker-4">
             <a-image 
                 src="assets/images/fossils/meganthropus.png" 
@@ -560,7 +532,7 @@
             </a-image>
         </a-marker>
 
-        <!-- Marker 5: Dolmen (2D Image) -->
+        <!-- Marker 5: Dolmen (2D Image in AR) -->
         <a-marker type="barcode" value="5" id="marker-5">
             <a-image 
                 src="assets/images/structures/dolmen.png" 
@@ -573,7 +545,7 @@
             </a-image>
         </a-marker>
 
-        <!-- Marker 6: Kjokkenmoddinger (2D Image) -->
+        <!-- Marker 6: Kjokkenmoddinger (2D Image in AR) -->
         <a-marker type="barcode" value="6" id="marker-6">
             <a-image 
                 src="assets/images/structures/kjokkenmoddinger.png" 
@@ -586,17 +558,17 @@
             </a-image>
         </a-marker>
 
-        <!-- Marker 7: Menhir (3D MODEL) ⭐ -->
+        <!-- Marker 7: Menhir (2D Image in AR) -->
         <a-marker type="barcode" value="7" id="marker-7">
-            <a-entity 
-                gltf-model="assets/images/structures/menhir.glb"
-                scale="0.4 0.4 0.4"
-                position="0 0.6 0"
-                rotation="0 0 0"
-                animation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear">
-            </a-entity>
-            <!-- Lighting untuk batu menhir -->
-            <a-entity light="type: point; intensity: 0.9; distance: 3;" position="0 1.5 0"></a-entity>
+            <a-image 
+                src="assets/images/structures/menhir.png" 
+                width="0.5" 
+                height="1.5" 
+                position="0 0.8 0"
+                rotation="-90 0 0"
+                transparent="true"
+                shader="flat">
+            </a-image>
         </a-marker>
 
         <!-- Marker 8: Candi Borobudur (Virtual Tour) -->
@@ -643,76 +615,85 @@
 
     <!-- JavaScript -->
     <script>
-        // Marker data dengan flag 3D model
+        // Marker data dengan semua info lengkap
         const markerData = {
             0: {
                 name: "Prasasti Ciaruteun",
                 type: "artifact",
-                is3D: false,
-                era: "Kerajaan Tarumanegara (Abad 5 M)",
-                description: "Prasasti Ciaruteun merupakan peninggalan penting Kerajaan Tarumanegara yang ditemukan di Bogor. Prasasti ini terdiri dari dua inskripsi dengan aksara Pallawa berbahasa Sanskerta. Yang paling menarik adalah gambar sepasang telapak kaki yang melambangkan kaki Raja Purnawarman, disamakan dengan Dewa Wisnu sebagai bentuk penghormatan."
+                is3D: true,
+                useARCard: true,
+                era: "Kerajaan Tarumanegara",
+                periode: "Abad ke-5 Masehi",
+                modelPath: "assets/images/artifacts/ciaruteun.glb"
             },
             1: {
                 name: "Kapak Genggam",
                 type: "artifact",
-                is3D: true, // ⭐ 3D MODEL
-                era: "Zaman Paleolitikum (2 juta - 200 ribu tahun lalu)",
-                description: "Kapak genggam adalah alat batu tertua dari masa Paleolitik berbentuk seperti daun dengan kedua sisi diasah tajam. Digunakan untuk memotong daging, menguliti, mengolah kayu, dan menggali umbi. Penemuan terkenal dari Pacitan melahirkan Kebudayaan Pacitan."
+                is3D: true,
+                useARCard: true,
+                era: "Zaman Paleolitikum",
+                periode: "2 juta - 200 ribu tahun lalu",
+                modelPath: "assets/images/artifacts/kapak-genggam.glb"
             },
             2: {
                 name: "Kapak Lonjong",
                 type: "artifact",
-                is3D: false,
-                era: "Zaman Neolitikum (3000 - 1500 SM)",
-                description: "Kapak lonjong menandai revolusi teknologi dari Paleolitikum ke Neolitikum. Dibuat dengan teknik pengasahan hingga permukaannya halus dan licin. Bentuk lonjong memungkinkan penggunaan bertangkai sebagai cangkul atau beliung untuk membuka lahan pertanian."
+                is3D: true,
+                useARCard: true,
+                era: "Zaman Neolitikum",
+                periode: "3000 - 1500 SM",
+                modelPath: "assets/images/artifacts/kapak-lonjong.glb"
             },
             3: {
                 name: "Homo Erectus",
                 type: "fossil",
                 is3D: true,
-                useARCard: true, // ⭐ Pakai AR Card (bukan modal)
+                useARCard: true,
                 era: "Pleistosen Tengah",
                 periode: "1,5 juta - 300 ribu tahun lalu",
-                penemu: "Eugene Dubois",
-                tahunPenemuan: "1891",
-                lokasiPenemuan: "Trinil, Jawa Timur",
-                tinggi: "160-170 cm",
-                volumeOtak: "750-1.200 cc",
-                ciri: "Dahi miring ke belakang, alis tebal dan menonjol",
-                description: "Homo erectus merupakan jenis manusia purba yang ditemukan oleh Eugene Dubois pada tahun 1891 dan hidup sekitar 1,5 juta hingga 300 ribu tahun yang lalu. Manusia purba ini memiliki tinggi badan sekitar 160–170 cm dengan tubuh yang tegap dan sudah mampu berjalan tegak sepenuhnya. Volume otaknya berkisar antara 750 hingga 1.200 cc, dengan ciri dahi miring ke belakang dan alis yang tebal dan menonjol. Homo erectus telah mampu menggunakan alat batu sederhana, menguasai api untuk memasak dan perlindungan, serta hidup berkelompok. Mereka biasanya tinggal di gua atau daerah terbuka yang dekat dengan sumber air."
+                modelPath: "assets/images/fossils/homo-erectus.glb"
             },
             4: {
                 name: "Meganthropus Paleojavanicus",
                 type: "fossil",
-                is3D: false,
-                era: "Pleistosen Awal (1-2 juta tahun lalu)",
-                description: "Meganthropus paleojavanicus adalah manusia purba tertua di Indonesia yang fosilnya ditemukan oleh von Koenigswald di Sangiran tahun 1937-1941. Memiliki tubuh tinggi sekitar 2,5 meter, rahang tebal tanpa dagu, gigi geraham besar, dan kapasitas otak 900 cc."
+                is3D: true,
+                useARCard: true,
+                era: "Pleistosen Awal",
+                periode: "1-2 juta tahun lalu",
+                modelPath: "assets/images/fossils/meganthropus.glb"
             },
             5: {
                 name: "Dolmen",
                 type: "structure",
-                is3D: false,
-                era: "Zaman Megalitikum (2000 SM - 500 M)",
-                description: "Dolmen berasal dari bahasa Breton yang berarti 'meja batu', tersusun dari batu-batu tegak sebagai penyangga dengan satu batu datar besar di atasnya. Berfungsi sebagai tempat sesaji untuk arwah nenek moyang dan penutup kubur batu."
+                is3D: true,
+                useARCard: true,
+                era: "Zaman Megalitikum",
+                periode: "2000 SM - 500 M",
+                modelPath: "assets/images/structures/dolmen.glb"
             },
             6: {
                 name: "Kjokkenmoddinger",
                 type: "structure",
-                is3D: false,
-                era: "Zaman Mesolitikum (10.000 - 3000 SM)",
-                description: "Kjokkenmoddinger berasal dari bahasa Denmark yang berarti 'sampah dapur', merujuk pada tumpukan kulit kerang dan sisa makanan manusia purba di tepi pantai. Menjadi bukti kehidupan semi-nomaden yang bergantung pada hasil laut."
+                is3D: true,
+                useARCard: true,
+                era: "Zaman Mesolitikum",
+                periode: "10.000 - 3000 SM",
+                modelPath: "assets/images/structures/kjokkenmoddinger.glb"
             },
             7: {
                 name: "Menhir",
                 type: "structure",
-                is3D: true, // ⭐ 3D MODEL
-                era: "Zaman Megalitikum (2000 SM - 500 M)",
-                description: "Menhir adalah batu tegak vertikal berukuran besar dari batu alam yang bersifat sakral. Memiliki fungsi sebagai sarana pemujaan, tempat peringatan, simbol kekuatan dan identitas, serta tempat menampung roh leluhur."
+                is3D: true,
+                useARCard: true,
+                era: "Zaman Megalitikum",
+                periode: "2000 SM - 500 M",
+                modelPath: "assets/images/structures/menhir.glb"
             },
             8: {
                 name: "Candi Borobudur",
                 type: "virtual-tour",
                 is3D: false,
+                useARCard: false,
                 era: "Dinasti Syailendra (780-830 M)",
                 location: "Magelang, Jawa Tengah",
                 description: "Candi Buddha terbesar di dunia yang dibangun pada abad ke-8. Memiliki struktur punden berundak dengan relief yang menggambarkan ajaran Buddha Mahayana.",
@@ -722,6 +703,7 @@
                 name: "Candi Prambanan",
                 type: "virtual-tour",
                 is3D: false,
+                useARCard: false,
                 era: "Kerajaan Mataram Kuno (856 M)",
                 location: "Sleman, Yogyakarta",
                 description: "Kompleks candi Hindu terbesar di Indonesia yang dibangun pada abad ke-9. Terdiri dari 240 struktur candi dengan Candi Siwa sebagai candi utama setinggi 47 meter.",
@@ -731,7 +713,6 @@
 
         let currentMarkerId = null;
         let currentTourUrl = null;
-        let current3DModel = null;
 
         // Hide loading screen
         function hideLoading() {
@@ -766,14 +747,14 @@
             }
         }
 
-        // Show AR Info Card (for markers with useARCard flag)
-        function showARCard(markerData) {
+        // Show AR Info Card (untuk marker 0-7)
+        function showARCard(data) {
             const card = document.getElementById('ar-info-card');
             if (!card) return;
 
-            document.getElementById('ar-card-title').textContent = markerData.name;
-            document.getElementById('ar-card-era').textContent = markerData.era;
-            document.getElementById('ar-card-period').textContent = markerData.periode || '';
+            document.getElementById('ar-card-title').textContent = data.name;
+            document.getElementById('ar-card-era').textContent = data.era;
+            document.getElementById('ar-card-period').textContent = data.periode || '';
 
             card.classList.add('show');
         }
@@ -790,14 +771,14 @@
         function openFromARCard() {
             if (currentMarkerId !== null && markerData[currentMarkerId]) {
                 const data = markerData[currentMarkerId];
-                const modelPath = getModelPath(currentMarkerId);
+                const modelPath = data.modelPath;
                 if (modelPath) {
                     window.location.href = `3d-viewer.html?model=${encodeURIComponent(modelPath)}&name=${encodeURIComponent(data.name)}&marker=${currentMarkerId}`;
                 }
             }
         }
 
-        // Show info modal
+        // Show info modal (untuk marker 8-9)
         function showInfo(markerId) {
             const data = markerData[markerId];
             if (!data) return;
@@ -806,25 +787,7 @@
             document.getElementById('modal-era').textContent = data.era;
             document.getElementById('modal-body').innerHTML = `<p>${data.description}</p>`;
 
-            // Show 3D badge if applicable
-            const badgeContainer = document.getElementById('model-badge-container');
-            if (data.is3D) {
-                badgeContainer.innerHTML = '<span class="model-badge">🎨 Model 3D Interaktif</span>';
-            } else {
-                badgeContainer.innerHTML = '';
-            }
-
-            // Show 3D Viewer button for 3D models
-            const viewerButton = document.getElementById('viewer-button');
-            if (data.is3D) {
-                viewerButton.style.display = 'block';
-                current3DModel = getModelPath(markerId);
-            } else {
-                viewerButton.style.display = 'none';
-                current3DModel = null;
-            }
-
-            // Show Virtual Tour button for tours
+            // Show Virtual Tour button
             const tourButton = document.getElementById('tour-button');
             if (data.type === 'virtual-tour') {
                 tourButton.style.display = 'block';
@@ -835,33 +798,6 @@
             }
 
             document.getElementById('info-modal').classList.add('show');
-        }
-
-        // Get model path based on marker ID
-        function getModelPath(markerId) {
-            const paths = {
-                1: 'assets/images/artifacts/kapak-genggam.glb',
-                3: 'assets/images/fossils/homo-erectus.glb',
-                7: 'assets/images/structures/menhir.glb'
-            };
-            return paths[markerId] || null;
-        }
-
-        // Open 3D Viewer with debug
-        function open3DViewer() {
-            console.log('open3DViewer called');
-            console.log('current3DModel:', current3DModel);
-            console.log('currentMarkerId:', currentMarkerId);
-            
-            if (current3DModel) {
-                const modelName = markerData[currentMarkerId].name;
-                const url = `3d-viewer.html?model=${encodeURIComponent(current3DModel)}&name=${encodeURIComponent(modelName)}`;
-                console.log('Redirecting to:', url);
-                window.location.href = url;
-            } else {
-                console.error('No 3D model path found');
-                alert('Model 3D tidak tersedia');
-            }
         }
 
         // Close modal
@@ -906,12 +842,12 @@
                             if (data) {
                                 showMarkerStatus(data.name, data.is3D);
                                 
-                                // Check if marker uses AR Card or Modal
+                                // Marker 0-7: Pakai AR Card
                                 if (data.useARCard) {
-                                    // Show AR Card (no auto-modal)
                                     setTimeout(() => showARCard(data), 500);
-                                } else {
-                                    // Show modal as usual
+                                } 
+                                // Marker 8-9: Pakai Modal (Virtual Tour)
+                                else {
                                     setTimeout(() => showInfo(i), 1000);
                                 }
                             }
@@ -920,7 +856,7 @@
                         marker.addEventListener('markerLost', function() {
                             console.log(`Marker ${i} lost`);
                             hideMarkerStatus();
-                            hideARCard(); // Hide AR card when marker lost
+                            hideARCard();
                             currentMarkerId = null;
                         });
                     }
