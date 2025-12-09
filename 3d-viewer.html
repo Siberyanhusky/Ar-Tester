@@ -581,9 +581,20 @@
     <script>
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const modelPath = urlParams.get('model');
+        let modelPath = urlParams.get('model');
         const modelName = urlParams.get('name') || 'Model 3D';
         const markerId = urlParams.get('marker');
+        const quality = urlParams.get('quality') || 'high';
+        
+        // Cek kualitas dan ubah path bila perlu
+        if (quality === 'low' && modelPath && !modelPath.includes('-low')) {
+            modelPath = modelPath.replace('.glb', '-low.glb');
+        }
+        
+        // Debug info
+        console.log("Kualitas model:", quality);
+        console.log("Path akhir yang digunakan:", modelPath);
+
 
         // Set model name in header
         document.getElementById('model-name').textContent = modelName;
