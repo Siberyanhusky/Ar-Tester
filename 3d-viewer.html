@@ -522,8 +522,43 @@
 
         // Marker data (harus sama dengan ar-viewer.html)
         const markerDataDetail = {
+            0: {
+                name: "Prasasti Ciaruteun",
+                type: "prasasti",
+                era: "Kerajaan Tarumanegara",
+                periode: "Abad ke-5 Masehi",
+                lokasiPenemuan: "Kampung Muara, Desa Ciaruteun Hilir, Cibungbulang, Bogor, Jawa Barat",
+                aksara: "Pallawa",
+                bahasa: "Sanskerta",
+                ciriKhas: "Memiliki relief sepasang telapak kaki yang melambangkan Raja Purnawarman dan disamakan dengan kaki Dewa Wisnu. Terdiri atas Inskripsi A dan Inskripsi B, di mana Inskripsi B belum terbaca pasti.",
+                description: "Prasasti Ciaruteun merupakan bukti kekuasaan dan legitimasi Raja Purnawarman dari Kerajaan Tarumanegara melalui simbol keagamaan dan politik."
+            },
+            1: {
+                name: "Kapak Genggam",
+                type: "artefak",
+                era: "Zaman Paleolitikum",
+                periode: "2 juta - 200 ribu tahun lalu",
+                teknik: "Teknik pukul-lepas (percussion flaking)",
+                fungsi: "Memotong, mengolah makanan, menguliti hewan, dan memecah tulang",
+                lokasiPenemuan: "Pacitan, Jawa Timur",
+                pengguna: "Homo erectus",
+                ciriKhas: "Digunakan tanpa tangkai, bermata tajam di dua sisi, dan terbuat dari batu keras",
+                description: "Kapak genggam merupakan alat batu tertua yang mencerminkan awal perkembangan teknologi manusia purba."
+            },
+            2: {
+                name: "Kapak Lonjong",
+                type: "artefak",
+                era: "Zaman Neolitikum",
+                periode: "3000 - 1500 SM",
+                teknik: "Teknik pengasahan hingga permukaan halus dan tajam",
+                fungsi: "Alat pertanian, penebangan, serta benda ritual dan simbol status sosial",
+                lokasiPenemuan: "Papua, Maluku, dan Sulawesi",
+                ciriKhas: "Berbentuk lonjong, digunakan dengan tangkai, dan terbuat dari batu halus seperti nefrit",
+                description: "Kapak lonjong menandai revolusi Neolitikum dengan peralihan dari berburu ke kehidupan menetap dan bercocok tanam."
+            },
             3: {
                 name: "Homo Erectus",
+                type: "fossil",
                 era: "Pleistosen Tengah",
                 periode: "1,5 juta - 300 ribu tahun lalu",
                 penemu: "Eugene Dubois",
@@ -533,6 +568,29 @@
                 volumeOtak: "750-1.200 cc",
                 ciri: "Dahi miring ke belakang, alis tebal dan menonjol",
                 description: "Homo erectus merupakan jenis manusia purba yang ditemukan oleh Eugene Dubois pada tahun 1891 dan hidup sekitar 1,5 juta hingga 300 ribu tahun yang lalu. Manusia purba ini memiliki tinggi badan sekitar 160–170 cm dengan tubuh yang tegap dan sudah mampu berjalan tegak sepenuhnya. Volume otaknya berkisar antara 750 hingga 1.200 cc, dengan ciri dahi miring ke belakang dan alis yang tebal dan menonjol. Homo erectus telah mampu menggunakan alat batu sederhana, menguasai api untuk memasak dan perlindungan, serta hidup berkelompok. Mereka biasanya tinggal di gua atau daerah terbuka yang dekat dengan sumber air."
+            },
+            4: {
+                name: "Meganthropus Paleojavanicus",
+                type: "fossil",
+                era: "Pleistosen Awal",
+                periode: "1-2 juta tahun lalu",
+                penemu: "G.H.R. von Koenigswald",
+                tahunPenemuan: "1937–1941",
+                lokasiPenemuan: "Sangiran, Jawa Tengah",
+                tinggi: "Sekitar 2–2,5 meter",
+                volumeOtak: "Sekitar ±900 cc",
+                ciri: "Rahang sangat tebal, tidak berdagu, gigi geraham besar, wajah menonjol ke depan, dan otot kunyah sangat kuat",
+                description: "Meganthropus paleojavanicus merupakan manusia purba tertua di Indonesia dengan ciri fisik yang masih sangat primitif."
+            },
+            5: {
+                name: "Dolmen",
+                type: "struktur",
+                era: "Zaman Megalitikum",
+                periode: "2000 SM - 500 M",
+                lokasiPenemuan: "Bondowoso dan Puger (Jawa Timur), Pasemah (Sumatra Selatan), dan Sumba (Nusa Tenggara Timur)",
+                fungsi: "Tempat sesaji arwah leluhur dan penutup kubur batu tokoh penting",
+                ciriKhas: "Meja batu besar dengan batu penyangga, berasal dari tradisi megalitik dan menunjukkan stratifikasi sosial",
+                description: "Dolmen menggambarkan kepercayaan masyarakat megalitik terhadap roh nenek moyang dan kehidupan setelah mati."
             }
         };
 
@@ -554,34 +612,74 @@
                     infoSection.innerHTML += createInfoItem('⏰', 'Periode', data.periode);
                 }
                 
-                // Tahun Penemuan
-                if (data.tahunPenemuan) {
-                    infoSection.innerHTML += createInfoItem('📅', 'Tahun Penemuan', data.tahunPenemuan);
+                // PRASASTI (Marker 0)
+                if (data.type === 'prasasti') {
+                    if (data.lokasiPenemuan) {
+                        infoSection.innerHTML += createInfoItem('📍', 'Lokasi', data.lokasiPenemuan);
+                    }
+                    if (data.aksara) {
+                        infoSection.innerHTML += createInfoItem('✍️', 'Aksara', data.aksara);
+                    }
+                    if (data.bahasa) {
+                        infoSection.innerHTML += createInfoItem('🗣️', 'Bahasa', data.bahasa);
+                    }
+                    if (data.ciriKhas) {
+                        infoSection.innerHTML += createInfoItem('✨', 'Ciri Khas', data.ciriKhas);
+                    }
                 }
                 
-                // Penemu
-                if (data.penemu) {
-                    infoSection.innerHTML += createInfoItem('👤', 'Penemu', data.penemu);
+                // ARTEFAK (Marker 1, 2)
+                if (data.type === 'artefak') {
+                    if (data.teknik) {
+                        infoSection.innerHTML += createInfoItem('🔨', 'Teknik Pembuatan', data.teknik);
+                    }
+                    if (data.fungsi) {
+                        infoSection.innerHTML += createInfoItem('⚙️', 'Fungsi', data.fungsi);
+                    }
+                    if (data.lokasiPenemuan) {
+                        infoSection.innerHTML += createInfoItem('📍', 'Lokasi Penemuan', data.lokasiPenemuan);
+                    }
+                    if (data.pengguna) {
+                        infoSection.innerHTML += createInfoItem('👤', 'Pengguna', data.pengguna);
+                    }
+                    if (data.ciriKhas) {
+                        infoSection.innerHTML += createInfoItem('✨', 'Ciri Khas', data.ciriKhas);
+                    }
                 }
                 
-                // Lokasi Penemuan
-                if (data.lokasiPenemuan) {
-                    infoSection.innerHTML += createInfoItem('📍', 'Lokasi Penemuan', data.lokasiPenemuan);
+                // FOSSIL (Marker 3, 4)
+                if (data.type === 'fossil') {
+                    if (data.tahunPenemuan) {
+                        infoSection.innerHTML += createInfoItem('📅', 'Tahun Penemuan', data.tahunPenemuan);
+                    }
+                    if (data.penemu) {
+                        infoSection.innerHTML += createInfoItem('👤', 'Penemu', data.penemu);
+                    }
+                    if (data.lokasiPenemuan) {
+                        infoSection.innerHTML += createInfoItem('📍', 'Lokasi Penemuan', data.lokasiPenemuan);
+                    }
+                    if (data.tinggi) {
+                        infoSection.innerHTML += createInfoItem('📏', 'Tinggi Badan', data.tinggi);
+                    }
+                    if (data.volumeOtak) {
+                        infoSection.innerHTML += createInfoItem('🧠', 'Volume Otak', data.volumeOtak);
+                    }
+                    if (data.ciri) {
+                        infoSection.innerHTML += createInfoItem('✨', 'Ciri Khas', data.ciri);
+                    }
                 }
                 
-                // Tinggi
-                if (data.tinggi) {
-                    infoSection.innerHTML += createInfoItem('📏', 'Tinggi Badan', data.tinggi);
-                }
-                
-                // Volume Otak
-                if (data.volumeOtak) {
-                    infoSection.innerHTML += createInfoItem('🧠', 'Volume Otak', data.volumeOtak);
-                }
-                
-                // Ciri Khas
-                if (data.ciri) {
-                    infoSection.innerHTML += createInfoItem('✨', 'Ciri Khas', data.ciri);
+                // STRUKTUR (Marker 5, 6, 7)
+                if (data.type === 'struktur') {
+                    if (data.fungsi) {
+                        infoSection.innerHTML += createInfoItem('⚙️', 'Fungsi', data.fungsi);
+                    }
+                    if (data.lokasiPenemuan) {
+                        infoSection.innerHTML += createInfoItem('📍', 'Lokasi', data.lokasiPenemuan);
+                    }
+                    if (data.ciriKhas) {
+                        infoSection.innerHTML += createInfoItem('✨', 'Ciri Khas', data.ciriKhas);
+                    }
                 }
                 
                 // Description
