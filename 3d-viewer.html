@@ -350,7 +350,6 @@
             opacity: 0.9;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             #canvas-container {
                 width: 100vw;
@@ -433,21 +432,19 @@
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
+    
     <div id="loading-screen">
         <div class="spinner"></div>
         <div class="loading-text">Memuat Model 3D...</div>
         <div class="loading-progress" id="loading-progress">0%</div>
     </div>
 
-    <!-- Error Message -->
     <div id="error-message">
         <div class="error-icon">⚠️</div>
         <div class="error-title">Gagal Memuat Model</div>
         <div class="error-desc">Model 3D tidak ditemukan atau format tidak didukung.</div>
     </div>
 
-    <!-- Header -->
     <div id="header">
         <a href="ar-viewer.html" id="back-button">
             <span>←</span>
@@ -460,10 +457,8 @@
         <div style="width: 100px;"></div> <!-- Spacer untuk center title -->
     </div>
 
-    <!-- Reset Button -->
     <button id="reset-button" onclick="resetCamera()">🔄 Reset View</button>
 
-    <!-- Controls Info -->
     <div id="controls-info">
         <div class="control-item">
             <div class="control-icon">🖱️</div>
@@ -488,10 +483,14 @@
         </div>
     </div>
 
-    <!-- Canvas Container -->
     <div id="canvas-container"></div>
 
-    <!-- Side Panel -->
+    <!-- Tombol toggle kualitas -->
+<button id="quality-toggle" style="position: fixed; top: 80px; left: 20px; z-index: 999;">
+    <span id="quality-icon">⭐</span>
+    <span id="quality-text">Grafis: HIGH</span>
+</button>
+
     <div id="side-panel">
         <h1 class="panel-title" id="panel-title">Homo Erectus</h1>
         <span class="panel-era" id="panel-era">Pleistosen Tengah</span>
@@ -981,6 +980,48 @@
 
         // Debug: Log model path
         console.log('Loading model from:', modelPath);
+
+                // Variabel global untuk toggle kualitas
+        let currentQuality = 'HIGH';
+
+        // Fungsi toggle kualitas
+        function toggleQuality() {
+            if (!model) return;
+
+            if (currentQuality === 'HIGH') {
+                // Switch ke LOW
+                currentQuality = 'LOW';
+                document.getElementById('quality-icon').textContent = '⚡';
+                document.getElementById('quality-text').textContent = 'Grafis: LOW';
+
+                model.traverse((child) => {
+                    if (child.isMesh) {
+                        // Simpan material awal jika ingin kembali
+                        child.originalMaterial = child.material;
+                        // Ganti ke material dasar
+                        child.material = new THREE.MeshBasicMaterial({ color: 0x8b5cf6 });
+                    }
+                });
+            } else {
+                // Switch ke HIGH
+                currentQuality = 'HIGH';
+                document.getElementById('quality-icon').textContent = '⭐';
+                document.getElementById('quality-text').textContent = 'Grafis: HIGH';
+
+                model.traverse((child) => {
+                    if (child.isMesh && child.originalMaterial) {
+                        // Kembali ke material standar
+                        child.material = child.originalMaterial;
+                        delete child.originalMaterial;
+                    }
+                });
+            }
+            // Aktifkan/Matikan shadow sesuai kualitas
+            renderer.shadowMap.enabled = (currentQuality === 'HIGH');
+        }
+
+        // Tambahkan event listener ke tombol
+        document.getElementById('quality-toggle').addEventListener('click', toggleQuality);
     </script>
 </body>
 </html>
