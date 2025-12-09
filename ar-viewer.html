@@ -402,6 +402,12 @@
         .a-orientation-modal {
             display: none !important;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
     </style>
 </head>
 <body>
@@ -767,14 +773,10 @@
             }
         }
 
-        // Open 3D Viewer from AR Card
+        // Open 3D Viewer from AR Card (dengan pilihan kualitas)
         function openFromARCard() {
             if (currentMarkerId !== null && markerData[currentMarkerId]) {
-                const data = markerData[currentMarkerId];
-                const modelPath = data.modelPath;
-                if (modelPath) {
-                    window.location.href = `3d-viewer.html?model=${encodeURIComponent(modelPath)}&name=${encodeURIComponent(data.name)}&marker=${currentMarkerId}`;
-                }
+                showQualityPopup(currentMarkerId);
             }
         }
 
@@ -875,6 +877,68 @@
             console.log('Window loaded');
             setTimeout(hideLoading, 2000);
         });
+
+        // === Popup Pilihan Kualitas Model ===
+        function showQualityPopup(markerId) {
+            const data = markerData[markerId];
+            if (!data || !data.modelPath) return;
+
+            // Buat elemen popup overlay
+            const popup = document.createElement('div');
+            popup.id = 'quality-popup';
+            popup.style.position = 'fixed';
+            popup.style.top = '0';
+            popup.style.left = '0';
+            popup.style.width = '100vw';
+            popup.style.height = '100vh';
+            popup.style.background = 'rgba(0,0,0,0.85)';
+            popup.style.display = 'flex';
+            popup.style.flexDirection = 'column';
+            popup.style.alignItems = 'center';
+            popup.style.justifyContent = 'center';
+            popup.style.zIndex = '9999';
+            popup.style.color = 'white';
+            popup.innerHTML = `
+                <div style="
+                    background: rgba(30,30,46,0.95);
+                    padding: 35px 45px;
+                    border-radius: 20px;
+                    text-align: center;
+                    max-width: 90%;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+                    animation: fadeIn 0.3s ease;
+                ">
+                    <h2 style="margin-bottom: 10px; font-size: 22px;">Model Ditemukan 🏺</h2>
+                    <p style="font-size: 16px; margin-bottom: 25px;">
+                        ${data.name}<br>
+                        Pilih kualitas model 3D yang ingin ditampilkan:
+                    </p>
+                    <div style="display:flex;gap:20px;justify-content:center;">
+                        <button id="btn-low" style="
+                            background:#8b5cf6;border:none;color:white;
+                            padding:10px 25px;border-radius:10px;font-weight:600;cursor:pointer;">
+                            🟢 Low
+                        </button>
+                        <button id="btn-high" style="
+                            background:#6366f1;border:none;color:white;
+                            padding:10px 25px;border-radius:10px;font-weight:600;cursor:pointer;">
+                            💎 High
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(popup);
+
+            // Aksi tombol
+            document.getElementById('btn-low').addEventListener('click', () => {
+                const lowModel = data.modelPath.replace('.glb', '-low.glb');
+                window.location.href = `3d-viewer.html?model=${encodeURIComponent(lowModel)}&name=${encodeURIComponent(data.name)}&marker=${markerId}&quality=low`;
+            });
+
+            document.getElementById('btn-high').addEventListener('click', () => {
+                window.location.href = `3d-viewer.html?model=${encodeURIComponent(data.modelPath)}&name=${encodeURIComponent(data.name)}&marker=${markerId}&quality=high`;
+            });
+        }
     </script>
 </body>
 </html>
