@@ -80,7 +80,7 @@
     "pemandangan": {
       "title": "Pemandangan dari Atas Borobudur",
       "type": "equirectangular",
-      "panorama": "https://bbull0444-png.github.io/ar-sejarah-indonesia/assets/virtual-tours/borobudur/scene-3.jpg",
+      "panorama": "https://raw.githubusercontent.com/Siberyanhusky/Ar-Tester/main/assets/virtual-tours/borobudur/scene-3.jpg",
       "pitch": -10,
       "yaw": 270,
       "hfov": 100,
