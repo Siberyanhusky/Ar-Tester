@@ -431,6 +431,56 @@
             }
         }
     </style>
+        /* Toggle Button untuk Controls */
+        #toggle-controls {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(139, 92, 246, 0.9);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+         }
+
+        #toggle-controls:hover {
+            background: rgba(139, 92, 246, 1);
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.6);
+        }
+
+        /* Animation untuk controls info */
+        #controls-info {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        #controls-info.hidden {
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+            pointer-events: none;
+        }
+
+        /* Responsive untuk mobile */
+        @media (max-width: 768px) {
+            #toggle-controls {
+                bottom: 60px;
+                font-size: 11px;
+                padding: 8px 16px;
+            }
+        }
+
 </head>
 <body>
     <!-- Loading Screen -->
@@ -979,8 +1029,45 @@
             document.getElementById('error-message').classList.add('show');
         }
 
+        // State untuk controls visibility
+        let controlsVisible = true;
+
+        // Fungsi toggle controls
+        function toggleControls() {
+            const controlsInfo = document.getElementById('controls-info');
+            const toggleIcon = document.getElementById('toggle-icon');
+            const toggleText = document.getElementById('toggle-text');
+    
+            controlsVisible = !controlsVisible;
+    
+            if (controlsVisible) {
+                // Show controls
+                controlsInfo.classList.remove('hidden');
+                toggleIcon.textContent = '👁️';
+                toggleText.textContent = 'Sembunyikan Kontrol';
+            } else {
+                // Hide controls
+                controlsInfo.classList.add('hidden');
+                toggleIcon.textContent = '👁️‍🗨️';
+                toggleText.textContent = 'Tampilkan Kontrol';
+            }
+        }
+
+        // Optional: Auto-hide setelah 5 detik
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (controlsVisible) {
+                    toggleControls();
+                }
+            }, 5000); // 5000ms = 5 detik
+        });
+        
         // Debug: Log model path
         console.log('Loading model from:', modelPath);
     </script>
+    <button id="toggle-controls" onclick="toggleControls()">
+    <span id="toggle-icon">👁️</span>
+    <span id="toggle-text">Sembunyikan Kontrol</span>
+</button>
 </body>
 </html>
