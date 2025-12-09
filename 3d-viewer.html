@@ -8,6 +8,7 @@
     <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
     
     <style>
         * {
@@ -882,13 +883,19 @@
         }
 
         function loadModel(path) {
-            const loader = new THREE.GLTFLoader();
-            
-            loader.load(
-                path,
-                function(gltf) {
-                    model = gltf.scene;
-                    
+        // Tambahkan Draco loader agar bisa membaca model terkompres
+        const dracoLoader = new THREE.DRACOLoader();
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/'); // lokasi decoder Draco resmi
+        dracoLoader.setDecoderConfig({ type: 'js' });
+    
+        const loader = new THREE.GLTFLoader();
+        loader.setDRACOLoader(dracoLoader); // sambungkan keduanya
+    
+        loader.load(
+            path,
+            function (gltf) {
+                model = gltf.scene;
+        
                     // Center and scale model
                     const box = new THREE.Box3().setFromObject(model);
                     const center = box.getCenter(new THREE.Vector3());
