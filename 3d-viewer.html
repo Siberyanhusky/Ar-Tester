@@ -593,7 +593,6 @@
         }
 
         // 🔹 Deteksi kualitas (default: high)
-        const quality = urlParams.get('quality') || 'high';
         console.log(`Mode Viewer: ${quality}`);
         
         // 🔹 Tambahkan indikator mode di judul
@@ -878,7 +877,6 @@
         renderer.outputEncoding = THREE.sRGBEncoding;
         container.appendChild(renderer.domElement);
 
-
             // Add lights
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambientLight);
@@ -926,21 +924,38 @@
             window.addEventListener('resize', onWindowResize);
             setupMouseControls();
             setupTouchControls();
+
+            console.log("🧩 Debug Info:");
+            console.log("Model path final:", modelPath);
+            console.log("Low mode aktif?", window.isLowQualityMode);
+            console.log("Apakah file ini diakses?", fetch(modelPath)
+              .then(res => console.log("Fetch Status:", res.status))
+              .catch(err => console.error("Fetch gagal:", err))
+            );
         }
 
         function loadModel(path) {
-        // Tambahkan Draco loader agar bisa membaca model terkompres
+        if (!path) {
+            console.error("❌ Tidak ada path model!");
+            showError();
+            return;
+        }
+    
+        console.log("🔍 Memuat model dari path:", path);
+    
         const dracoLoader = new THREE.DRACOLoader();
-        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/'); // lokasi decoder Draco resmi
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
         dracoLoader.setDecoderConfig({ type: 'js' });
     
         const loader = new THREE.GLTFLoader();
-        loader.setDRACOLoader(dracoLoader); // sambungkan keduanya
+        loader.setDRACOLoader(dracoLoader);
     
         loader.load(
             path,
             function (gltf) {
+                console.log("✅ Model berhasil dimuat!");
                 model = gltf.scene;
+
         
                     // Center and scale model
                     const box = new THREE.Box3().setFromObject(model);
