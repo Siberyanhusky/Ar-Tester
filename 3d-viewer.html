@@ -236,7 +236,6 @@
             margin-left: 10px;
         }
 
-        /* Controls Info */
         #controls-info {
             position: fixed;
             bottom: 20px;
@@ -253,8 +252,15 @@
             flex-wrap: wrap;
             justify-content: center;
             max-width: 90%;
+            transition: all 0.4s ease;
         }
 
+        #controls-info.hidden {
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+            pointer-events: none;
+        }
+        
         .control-item {
             display: flex;
             align-items: center;
@@ -290,10 +296,8 @@
             font-size: 14px;
         }
 
-        /* Reset Button */
-        #reset-button {
+        #reset-button, #toggle-controls, #quality-toggle {
             position: fixed;
-            top: 90px;
             right: 20px;
             background: rgba(139, 92, 246, 0.9);
             color: white;
@@ -306,15 +310,30 @@
             box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
             transition: all 0.3s ease;
             z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        #reset-button:hover {
-            background: rgba(139, 92, 246, 1);
+        #reset-button { top: 90px; }
+        #quality-toggle { top: 150px; }
+        #toggle-controls { bottom: 90px; }
+
+        #reset-button:hover, #toggle-controls:hover, #quality-toggle:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(139, 92, 246, 0.6);
         }
 
-        /* Error Message */
+        #quality-toggle.mode-high {
+            background: rgba(34, 197, 94, 0.9);
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.4);
+        }
+
+        #quality-toggle.mode-low {
+            background: rgba(249, 115, 22, 0.9);
+            box-shadow: 0 5px 15px rgba(249, 115, 22, 0.4);
+        }
+        
         #error-message {
             position: fixed;
             top: 50%;
@@ -350,7 +369,6 @@
             opacity: 0.9;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             #canvas-container {
                 width: 100vw;
@@ -366,88 +384,32 @@
                 right: 0;
                 top: auto;
                 padding: 20px;
-                box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
             }
 
-            .panel-title {
-                font-size: 20px;
-            }
-
-            .info-item {
-                padding: 10px;
-                margin-bottom: 10px;
-            }
-
-            .info-icon {
-                width: 30px;
-                height: 30px;
-                min-width: 30px;
-                font-size: 16px;
-            }
-
-            .info-value {
-                font-size: 13px;
-            }
-
-            .description-text {
-                font-size: 13px;
-            }
-
-            #header {
-                padding: 15px;
-            }
-
-            #model-title {
-                font-size: 16px;
-            }
-
-            .title-badge {
-                font-size: 10px;
-                padding: 3px 10px;
-            }
-
-            #controls-info {
-                padding: 12px 20px;
-                gap: 15px;
-                bottom: 10px;
-            }
-
-            .control-item {
-                font-size: 11px;
-            }
-
-            .control-icon {
-                width: 30px;
-                height: 30px;
-                font-size: 16px;
-            }
-
-            #reset-button {
-                top: auto;
-                bottom: 100px;
-                right: 15px;
+            #reset-button, #quality-toggle, #toggle-controls {
                 padding: 10px 20px;
                 font-size: 12px;
+            }
+
+            #toggle-controls {
+                bottom: 60px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
     <div id="loading-screen">
         <div class="spinner"></div>
         <div class="loading-text">Memuat Model 3D...</div>
         <div class="loading-progress" id="loading-progress">0%</div>
     </div>
 
-    <!-- Error Message -->
     <div id="error-message">
         <div class="error-icon">⚠️</div>
         <div class="error-title">Gagal Memuat Model</div>
         <div class="error-desc">Model 3D tidak ditemukan atau format tidak didukung.</div>
     </div>
 
-    <!-- Header -->
     <div id="header">
         <a href="ar-viewer.html" id="back-button">
             <span>←</span>
@@ -460,10 +422,16 @@
         <div style="width: 100px;"></div> <!-- Spacer untuk center title -->
     </div>
 
-    <!-- Reset Button -->
     <button id="reset-button" onclick="resetCamera()">🔄 Reset View</button>
-
-    <!-- Controls Info -->
+    <button id="quality-toggle">
+        <span id="quality-icon">⭐</span>
+        <span id="quality-text">Grafis: HIGH</span>
+        </button>
+    <button id="toggle-controls">
+        <span id="toggle-icon">👁️</span>
+        <span id="toggle-text">Sembunyikan Kontrol</span>
+    </button>
+    
     <div id="controls-info">
         <div class="control-item">
             <div class="control-icon">🖱️</div>
@@ -488,10 +456,8 @@
         </div>
     </div>
 
-    <!-- Canvas Container -->
     <div id="canvas-container"></div>
 
-    <!-- Side Panel -->
     <div id="side-panel">
         <h1 class="panel-title" id="panel-title">Homo Erectus</h1>
         <span class="panel-era" id="panel-era">Pleistosen Tengah</span>
@@ -800,6 +766,11 @@
             window.addEventListener('resize', onWindowResize);
             setupMouseControls();
             setupTouchControls();
+
+            // Button events
+            document.getElementById('reset-button').addEventListener('click', resetCamera);
+            document.getElementById('quality-toggle').addEventListener('click', toggleQuality);
+            document.getElementById('toggle-controls').addEventListener('click', toggleControls);
         }
 
         function loadModel(path) {
@@ -960,6 +931,45 @@
         function resetCamera() {
             targetRotation = { x: 0, y: 0 };
             targetCameraDistance = 5;
+        }
+
+        function toggleQuality() {
+            currentQuality = currentQuality === 'HIGH' ? 'LOW' : 'HIGH';
+            const button = document.getElementById('quality-toggle');
+            const icon = document.getElementById('quality-icon');
+            const text = document.getElementById('quality-text');
+            
+            if (currentQuality === 'HIGH') {
+                button.classList.remove('mode-low');
+                button.classList.add('mode-high');
+                icon.textContent = '⭐';
+                text.textContent = 'Grafis: HIGH';
+                renderer.shadowMap.enabled = true;
+            } else {
+                button.classList.remove('mode-high');
+                button.classList.add('mode-low');
+                icon.textContent = '⚡';
+                text.textContent = 'Grafis: LOW';
+                renderer.shadowMap.enabled = false;
+            }
+        }
+
+        function toggleControls() {
+            const controlsInfo = document.getElementById('controls-info');
+            const toggleIcon = document.getElementById('toggle-icon');
+            const toggleText = document.getElementById('toggle-text');
+            
+            controlsVisible = !controlsVisible;
+            
+            if (controlsVisible) {
+                controlsInfo.classList.remove('hidden');
+                toggleIcon.textContent = '👁️';
+                toggleText.textContent = 'Sembunyikan Kontrol';
+            } else {
+                controlsInfo.classList.add('hidden');
+                toggleIcon.textContent = '👁️‍🗨️';
+                toggleText.textContent = 'Tampilkan Kontrol';
+            }
         }
 
         function onWindowResize() {
