@@ -428,8 +428,8 @@
                 right: 15px;
                 padding: 10px 20px;
                 font-size: 12px;
-            }
         }
+        
         /* Toggle Button untuk Controls */
         #toggle-controls {
             position: fixed;
@@ -450,7 +450,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-         }
+        }
 
         #toggle-controls:hover {
             background: rgba(139, 92, 246, 1);
@@ -477,6 +477,70 @@
                 bottom: 60px;
                 font-size: 11px;
                 padding: 8px 16px;
+        }
+
+        /* Quality Toggle Button */
+        #quality-toggle {
+            position: fixed;
+            top: 210px;
+            right: 20px;
+            background: rgba(59, 130, 246, 0.9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #quality-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.6);
+        }
+
+        #quality-toggle.mode-high {
+            background: rgba(34, 197, 94, 0.9);
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.4);
+        }
+
+        #quality-toggle.mode-high:hover {
+            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.6);
+        }
+
+        #quality-toggle.mode-low {
+            background: rgba(249, 115, 22, 0.9);
+            box-shadow: 0 5px 15px rgba(249, 115, 22, 0.4);
+        }
+
+        #quality-toggle.mode-low:hover {
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.6);
+        }
+
+        /* Glow animation saat switch */
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
+            50% { box-shadow: 0 5px 30px rgba(59, 130, 246, 0.8); }
+        }
+
+        #quality-toggle.switching {
+            animation: glow 0.5s ease;
+        }
+
+        /* Responsive Mobile */
+        @media (max-width: 768px) {
+            #quality-toggle {
+                top: auto;
+                bottom: 140px;
+                right: 15px;
+                padding: 10px 20px;
+                font-size: 12px;
             }
         }
         
@@ -513,6 +577,12 @@
     <!-- Reset Button -->
     <button id="reset-button" onclick="resetCamera()">🔄 Reset View</button>
 
+    <!-- Quality Toggle Button -->
+    <button id="quality-toggle" onclick="toggleQuality()">
+        <span id="quality-icon">⭐</span>
+        <span id="quality-text">Grafis: HIGH</span>
+    </button>
+ 
     <!-- Controls Info -->
     <div id="controls-info">
         <div class="control-item">
@@ -846,6 +916,8 @@
             // Load 3D model
             loadModel(modelPath);
 
+            initializeQuality();
+
             // Event listeners
             window.addEventListener('resize', onWindowResize);
             setupMouseControls();
@@ -872,11 +944,12 @@
                     model.position.sub(center.multiplyScalar(scale));
                     model.position.y += 1;
                     
-                    // Enable shadows
+                    // Enable shadows based on quality setting
+                    const shadowEnabled = qualitySettings[currentQuality].shadows;
                     model.traverse((child) => {
                         if (child.isMesh) {
-                            child.castShadow = true;
-                            child.receiveShadow = true;
+                            child.castShadow = shadowEnabled;
+                            child.receiveShadow = shadowEnabled;
                         }
                     });
                     
@@ -1027,7 +1100,160 @@
         function showError() {
             document.getElementById('loading-screen').classList.add('hidden');
             document.getElementById('error-message').classList.add('show');
+            
+        // ========== QUALITY TOGGLE SYSTEM ==========
+
+        // Quality state
+        let currentQuality = 'HIGH'; // Default HIGH
+        let qualitySettings = {
+            HIGH: {
+                shadows: true,
+                lightsCount: 3,
+                antialias: true,
+                gridHelper: true,
+                icon: '⭐',
+                text: 'Grafis: HIGH',
+                class: 'mode-high'
+            },
+            LOW: {
+                shadows: false,
+                lightsCount: 2,
+                antialias: false,
+                gridHelper: false,
+                icon: '⚡',
+                text: 'Grafis: LOW',
+                class: 'mode-low'
+            }
+        };
+
+        // Detect device and set initial quality
+        function detectDeviceQuality() {
+            // Try to get RAM
+            const deviceMemory = navigator.deviceMemory; // in GB
+    
+            if (deviceMemory !== undefined) {
+            // RAM detection available
+            if (deviceMemory >= 8) {
+                return 'HIGH';
+            } else {
+                return 'LOW';
+            }
+        } else {
+            // RAM detection not available - Use fallback
+            const userAgent = navigator.userAgent.toLowerCase();
+        
+            // iPhone/iPad - Always HIGH (GPU kuat)
+            if (userAgent.includes('iphone') || userAgent.includes('ipad')) {
+                return 'HIGH';
+            }
+        
+            // Desktop (Windows/Mac/Linux) - HIGH
+            if (userAgent.includes('windows') || userAgent.includes('macintosh') || userAgent.includes('linux')) {
+                return 'HIGH';
+            }
+        
+            // Android - LOW (safer default)
+            if (userAgent.includes('android')) {
+                return 'LOW';
+            }
+        
+            // Unknown - default LOW
+            return 'LOW';
         }
+    }
+
+    // Apply quality settings to scene
+    function applyQualitySettings(quality) {
+        const settings = qualitySettings[quality];
+    
+        if (!scene || !renderer) return;
+    
+        // Smooth fade transition
+        const canvas = renderer.domElement;
+        canvas.style.transition = 'opacity 0.3s ease';
+        canvas.style.opacity = '0';
+    
+        setTimeout(() => {
+            // Apply shadow settings
+            renderer.shadowMap.enabled = settings.shadows;
+        
+            if (model) {
+                model.traverse((child) => {
+                    if (child.isMesh) {
+                        child.castShadow = settings.shadows;
+                        child.receiveShadow = settings.shadows;
+                    }
+                });
+            }
+        
+            // Update lights (akan di-handle di init, tapi kita trigger re-render)
+            // Grid helper visibility
+            scene.traverse((object) => {
+                if (object.type === 'GridHelper') {
+                    object.visible = settings.gridHelper;
+                }
+            });
+        
+            // Fade back in
+            canvas.style.opacity = '1';
+        }, 300);
+    }
+
+    // Toggle quality
+    function toggleQuality() {
+        const button = document.getElementById('quality-toggle');
+        const icon = document.getElementById('quality-icon');
+        const text = document.getElementById('quality-text');
+    
+        // Add switching animation
+        button.classList.add('switching');
+    
+        // Toggle between HIGH and LOW
+        currentQuality = currentQuality === 'HIGH' ? 'LOW' : 'HIGH';
+    
+        // Update button UI
+        const settings = qualitySettings[currentQuality];
+        icon.textContent = settings.icon;
+        text.textContent = settings.text;
+    
+        // Remove old class, add new class
+        button.classList.remove('mode-high', 'mode-low');
+        button.classList.add(settings.class);
+    
+        // Apply settings
+        applyQualitySettings(currentQuality);
+    
+        // Remove animation class after animation ends
+        setTimeout(() => {
+            button.classList.remove('switching');
+        }, 500);
+    
+        console.log('Quality switched to:', currentQuality);
+    }
+
+    // Initialize quality on page load
+    function initializeQuality() {
+        // Detect optimal quality
+        const detectedQuality = detectDeviceQuality();
+        currentQuality = detectedQuality;
+    
+        // Update button UI
+        const button = document.getElementById('quality-toggle');
+        const icon = document.getElementById('quality-icon');
+        const text = document.getElementById('quality-text');
+    
+        const settings = qualitySettings[currentQuality];
+        icon.textContent = settings.icon;
+        text.textContent = settings.text;
+        button.classList.add(settings.class);
+    
+        console.log('Device detected:', {
+            RAM: navigator.deviceMemory ? navigator.deviceMemory + 'GB' : 'Unknown',
+            UserAgent: navigator.userAgent,
+            Quality: currentQuality
+        });
+    }
+
 
         // State untuk controls visibility
         let controlsVisible = true;
