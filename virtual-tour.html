@@ -483,28 +483,19 @@
             background: #764ba2;
         }
 
-        /* Credit Bar (pojok kiri bawah) */
         .credit-bar {
             position: fixed;
             bottom: 10px;
             left: 15px;
-            background: rgba(0, 0, 0, 0.6);
             color: white;
-            font-size: 12px;
+            font-size: 13px;
+            background: rgba(0, 0, 0, 0.5);
             padding: 6px 12px;
-            border-radius: 8px;
-            z-index: 9999;
-            font-weight: 400;
-            letter-spacing: 0.3px;
-            backdrop-filter: blur(4px);
-            animation: fadeIn 1.2s ease-in-out;
+            border-radius: 10px;
+            z-index: 1200;
+            backdrop-filter: blur(6px);
         }
         
-        /* Animasi muncul halus */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
     </style>
 </head>
 <body>
@@ -618,11 +609,13 @@
                 // Load first scene
                 await loadScene(firstSceneId);
 
+                // Tampilkan credit sesuai candi
+                document.querySelector('.credit-bar').innerHTML =
+                `© 2025 Tim IT Pendidikan Sejarah UPI Angkatan 2022 Kelas B — Virtual Tour ${metadata.title} dibuat dengan AI (DreamINA) untuk pembelajaran sejarah.`;
+
+
                 // Hide loading
                 document.getElementById('loading').classList.add('hidden');
-
-                // Tampilkan credit global dari tour-config.json
-                document.getElementById('credit').innerHTML = tourConfig.default.credit;
 
             } catch (error) {
                 console.error('Initialization error:', error);
@@ -826,8 +819,8 @@
 
     <!-- Credit -->
     <div class="credit-bar">
-    © 2025 Tim IT Pendidikan Sejarah UPI Angkatan 2022 Kelas B — 
-    Virtual Tour Prambanan dibuat dengan AI (DreamINA) untuk pembelajaran sejarah.
-</div>
+        © 2025 Tim IT Pendidikan Sejarah UPI Angkatan 2022 Kelas B — 
+        Virtual Tour Prambanan dibuat dengan AI (DreamINA) untuk pembelajaran sejarah.
+    </div>
 </body>
 </html>
