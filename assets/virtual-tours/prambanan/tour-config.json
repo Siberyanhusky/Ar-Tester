@@ -3,7 +3,7 @@
     "firstScene": "overview-aerial",
     "author": "AR Sejarah Indonesia",
     "sceneFadeDuration": 1000,
-    "autoLoad": true
+    "autoLoad": true,
     "credit": "© 2025 Tim IT Pendidikan Sejarah UPI Angkatan 2022 Kelas B — Virtual Tour Prambanan dibuat dengan AI (DreamINA) untuk pembelajaran sejarah."
   },
   "scenes": {
