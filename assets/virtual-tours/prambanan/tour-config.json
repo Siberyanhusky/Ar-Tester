@@ -9,7 +9,7 @@
     "overview-aerial": {
       "title": "Pandangan Udara Prambanan",
       "type": "equirectangular",
-      "panorama": "https://bbull0444-png.github.io/ar-sejarah-indonesia/assets/virtual-tours/prambanan/scene-aerial.jpg",
+      "panorama": "https://raw.githubusercontent.com/Siberyanhusky/Ar-Tester/main/assets/virtual-tours/prambanan/scene-1.jpg",
       "pitch": -20,
       "yaw": 0,
       "hfov": 110,
@@ -63,7 +63,7 @@
     "candi-siwa": {
       "title": "Candi Siwa",
       "type": "equirectangular",
-      "panorama": "https://bbull0444-png.github.io/ar-sejarah-indonesia/assets/virtual-tours/prambanan/scene-siwa.jpg",
+      "panorama": "https://raw.githubusercontent.com/Siberyanhusky/Ar-Tester/main/assets/virtual-tours/prambanan/scene-2.jpg",
       "pitch": 0,
       "yaw": 180,
       "hfov": 100,
@@ -124,7 +124,7 @@
     "candi-wisnu": {
       "title": "Candi Wisnu",
       "type": "equirectangular",
-      "panorama": "https://bbull0444-png.github.io/ar-sejarah-indonesia/assets/virtual-tours/prambanan/scene-wisnu.jpg",
+      "panorama": "https://raw.githubusercontent.com/Siberyanhusky/Ar-Tester/main/assets/virtual-tours/prambanan/scene-3.jpg",
       "pitch": 0,
       "yaw": 180,
       "hfov": 100,
@@ -185,7 +185,7 @@
     "candi-brahma": {
       "title": "Candi Brahma",
       "type": "equirectangular",
-      "panorama": "https://bbull0444-png.github.io/ar-sejarah-indonesia/assets/virtual-tours/prambanan/scene-brahma.jpg",
+      "panorama": "https://raw.githubusercontent.com/Siberyanhusky/Ar-Tester/main/assets/virtual-tours/prambanan/scene-4.jpg",
       "pitch": 0,
       "yaw": 180,
       "hfov": 100,
