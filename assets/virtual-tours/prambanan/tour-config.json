@@ -124,7 +124,7 @@
     "candi-wisnu": {
       "title": "Candi Wisnu",
       "type": "equirectangular",
-      "panorama": "https://raw.githubusercontent.com/Siberyanhusky/Ar-Tester/main/assets/virtual-tours/prambanan/scene-3.jpg",
+      "panorama": "https://raw.githubusercontent.com/Siberyanhusky/Ar-Tester/main/assets/virtual-tours/prambanan/scene-3.jpeg",
       "pitch": 0,
       "yaw": 180,
       "hfov": 100,
