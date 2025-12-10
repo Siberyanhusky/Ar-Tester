@@ -9,7 +9,7 @@
     "stupa-utama": {
       "title": "Stupa Utama Borobudur",
       "type": "equirectangular",
-      "panorama": "https://bbull0444-png.github.io/ar-sejarah-indonesia/assets/virtual-tours/borobudur/scene-1.jpg",
+      "panorama": "https://raw.githubusercontent.com/Siberyanhusky/Ar-Tester/main/assets/virtual-tours/borobudur/scene-1.jpg",
       "pitch": 0,
       "yaw": 180,
       "hfov": 100,
@@ -41,7 +41,7 @@
     "lorong-relief": {
       "title": "Lorong Relief Borobudur",
       "type": "equirectangular",
-      "panorama": "https://bbull0444-png.github.io/ar-sejarah-indonesia/assets/virtual-tours/borobudur/scene-2.jpg",
+      "panorama": "https://raw.githubusercontent.com/Siberyanhusky/Ar-Tester/main/assets/virtual-tours/borobudur/scene-2.jpg",
       "pitch": 0,
       "yaw": 180,
       "hfov": 100,
