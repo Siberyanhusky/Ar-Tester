@@ -494,7 +494,34 @@
                 padding: 10px 20px;
                 font-size: 12px;
             }
-        }
+
+            /* Credit Overlay - di dalam canvas */
+            #credit-overlay {
+                position: absolute;
+                bottom: 15px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 0, 0, 0.4);
+                backdrop-filter: blur(6px);
+                color: white;
+                font-size: 9px;
+                padding: 8px 12px;
+                border-radius: 6px;
+                z-index: 500;
+                text-align: center;
+                line-height: 1.4;
+                pointer-events: none;
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            }
+            
+            @media (max-width: 768px) {
+                #credit-overlay {
+                    font-size: 8px;
+                    padding: 6px 10px;
+                    bottom: 10px;
+                    max-width: 85%;
+                }
+            }
     </style>
 </head>
 <body>
@@ -558,8 +585,13 @@
     <button id="show-controls" style="display:none;">ℹ️ Tampilkan Kontrol</button>
 
     <!-- Canvas Container -->
-    <div id="canvas-container"></div>
-
+    <div id="canvas-container">
+         <div id="credit-overlay">
+        © 2025 Tim IT Pendidikan Sejarah UPI<br>
+        Model 3D dibuat dengan Tripo3D.ai
+    </div>
+  </div>
+    
     <!-- Side Panel -->
     <div id="side-panel">
         <h1 class="panel-title" id="panel-title">Homo Erectus</h1>
