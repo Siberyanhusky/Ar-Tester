@@ -748,6 +748,28 @@
                 content += `<h3>Sejarah:</h3><p>${scene.history}</p>`;
             }
 
+            // TAMBAHAN BARU: Tampilkan sumber dari tourConfig.default.sources
+            if (tourConfig.default && tourConfig.default.sources && tourConfig.default.sources.length > 0) {
+                content += '<h3 style="margin-top: 20px; padding-top: 15px; border-top: 2px solid #ddd;">Sumber:</h3>';
+                content += '<ul style="font-size: 12px; line-height: 1.5;">';
+                
+                tourConfig.default.sources.forEach((source, index) => {
+                    let citation = `${source.author} (${source.year}). <em>${source.title}</em>.`;
+                    
+                    if (source.location) {
+                        citation += ` ${source.location}`;
+                    }
+                    
+                    if (source.journal) {
+                        citation += ` <em>${source.journal}</em>`;
+                    }
+                    
+                    content += `<li style="margin-bottom: 10px;">${citation}</li>`;
+                });
+                
+                content += '</ul>';
+            }
+        
             infoContent.innerHTML = content || '<p>Tidak ada informasi tambahan untuk scene ini.</p>';
         }
 
