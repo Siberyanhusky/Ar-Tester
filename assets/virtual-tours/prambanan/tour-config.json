@@ -14,22 +14,23 @@
       "pitch": -20,
       "yaw": 0,
       "hfov": 110,
-      "description": "Kompleks Candi Prambanan dilihat dari ketinggian. Prambanan adalah kompleks candi Hindu terbesar di Indonesia yang dibangun pada abad ke-9 Masehi oleh Wangsa Sanjaya.",
+      "description": "Jika dilihat dari ketinggian, kompleks Candi Prambanan tampak tersusun dalam pola mandala berbentuk persegi berlapis yang terpusat, mencerminkan konsep kosmologi Hindu tentang alam semesta.",
       "facts": [
-        "Kompleks terdiri dari 240 candi",
-        "Luas area: 39.8 hektar",
-        "Terdapat 3 candi utama (Trimurti): Siwa (tengah), Wisnu (utara/kiri), dan Brahma (selatan/kanan)",
-        "Dibangun sekitar tahun 850 Masehi",
-        "Tercatat sebagai Situs Warisan Dunia UNESCO sejak 1991"
+        "Candi hindu terbesar di Indonesia",
+        "Nama asli Candi Prambanan diduga adalah Siwagraha (rumah dewa siwa)",
+        "Tercatat sebagai warisan dunia UNESCO sejak 1991",
+        "Kumpulan dari 240 bangunan candi",
+        "Memiliki luas : 39,8 hektar",
+        "Memiliki 3 candi utama yaitu : Candi Siwa (tengah), Candi Wisnu (utara/kiri), dan Candi Brahma (Selatan/kanan)."
       ],
-      "history": "Candi Prambanan dibangun oleh Raja Rakai Pikatan dari Dinasti Sanjaya sebagai tandingan Candi Borobudur yang beragama Buddha. Kompleks ini menggambarkan kejayaan kerajaan Hindu Mataram Kuno di Jawa Tengah.",
+      "history": "Kompleks Candi Prambanan berada di desa Karangasem, kelurahan Bokoharjo, kecamatan Prambanan, Kabupaten Sleman dalam Daerah Istimewa Yogyakarta. Kompleks Candi Prambanan mulai dibangun pada masa pemerintahan Sri Maharaja Rakai Pikatan, dan peresmiannya berlangsung pada tahun 778 Saka (856 M) pada masa pemerintahan Sri Maharaja Rakai Kayuwangi.",
       "hotSpots": [
         {
           "pitch": -10,
           "yaw": 0,
           "type": "info",
           "text": "Candi Siwa (Tengah)",
-          "description": "Candi tertinggi setinggi 47 meter, didedikasikan untuk Dewa Siwa sang Penghancur. Ini adalah candi utama dan terbesar di kompleks Prambanan."
+          "description": "Candi Siwa merupakan candi utama dan tertinggi serta terbesar di kompleks Prambanan dengan tinggi 47 meter. Didedikasikan untuk Dewa Siwa sebagai Dewa Penghancur dalam Trimurti Hindu."
         },
         {
           "pitch": -5,
@@ -68,7 +69,7 @@
       "pitch": 0,
       "yaw": 180,
       "hfov": 100,
-      "description": "Candi Siwa adalah candi tertinggi dan terbesar di kompleks Prambanan dengan ketinggian 47 meter. Didedikasikan untuk Dewa Siwa sebagai Sang Penghancur dalam Trimurti Hindu.",
+      "description": "Candi Siwa merupakan candi utama dan tertinggi serta terbesar di kompleks Prambanan dengan tinggi 47 meter. Didedikasikan untuk Dewa Siwa sebagai Dewa Penghancur dalam Trimurti Hindu.",
       "facts": [
         "Tinggi: 47 meter (tertinggi di Prambanan)",
         "Berisi 4 ruang dengan arca: Siwa Mahadewa (utama), Ganesha (utara), Agastya (selatan), dan Durga (barat)",
@@ -76,7 +77,7 @@
         "Dibangun dengan batu andesit vulkanik",
         "Nama 'Loro Jonggrang' berasal dari legenda lokal tentang arca Durga"
       ],
-      "history": "Candi Siwa dibangun pada abad ke-9 oleh Raja Rakai Pikatan. Ini adalah monumen Hindu terbesar di Indonesia dan pusat dari kompleks Prambanan. Relief Ramayana di candi ini merupakan salah satu karya seni relief paling indah di Asia Tenggara.",
+      "history": "Candi ini merupakan candi induk dan ukuran lebih besar dari candi lainnya. Berdasarkan Prasasti Siwagraha, Candi Siwa didirikan sebagai tempat pemujaan utama Dewa Siwa, salah satu dewa terpenting dalam ajaran Hindu, khususnya aliran Siwaisme",
       "hotSpots": [
         {
           "pitch": 0,
@@ -137,7 +138,7 @@
         "Arsitektur simetris dengan Candi Brahma",
         "Wisnu memiliki 10 avatar utama (Dashavatara)"
       ],
-      "history": "Candi Wisnu melengkapi konsep Trimurti Prambanan sebagai representasi Sang Pemelihara. Relief di candi ini menceritakan Krishnayana, kisah kehidupan Krishna yang merupakan avatar kedelapan dari Wisnu.",
+      "history": "Candi ini didirikan sebagai tempat pemujaan Dewa Wisnu, dewa pemelihara alam semesta dalam ajaran Hindu, dan menjadi bagian dari pemujaan Trimurti bersama Candi Siwa dan Candi Brahma. Secara arsitektural, Candi Wisnu berukuran lebih kecil dibandingkan Candi Siwa dan memiliki satu ruang utama yang dahulu berisi arca Wisnu, dengan relief kisah Kreshnayana terpahat pada dinding pagar langkannya.",
       "hotSpots": [
         {
           "pitch": 5,
@@ -198,7 +199,7 @@
         "Empat kepala Brahma menghadap empat penjuru mata angin",
         "Brahma menciptakan alam semesta melalui meditasi"
       ],
-      "history": "Candi Brahma sebagai representasi Sang Pencipta melengkapi Trimurti Prambanan. Relief di candi ini adalah kelanjutan dari kisah Ramayana yang dimulai di Candi Siwa, dengan total 182 panel di kedua candi tersebut.",
+      "history": "Candi ini didirikan sebagai tempat pemujaan Dewa Brahma, dewa pencipta dalam ajaran Hindu, dan menjadi bagian dari konsep Trimurti bersama Candi Siwa dan Candi Wisnu. Secara arsitektural, Candi Brahma berukuran lebih kecil dibandingkan Candi Siwa dan hanya memiliki satu ruang utama yang dahulu menyimpan arca Brahma, sementara dinding pagar langkannya dihiasi relief kisah Ramayana sebagai kelanjutan cerita dari Candi Siwa.",
       "hotSpots": [
         {
           "pitch": 10,
