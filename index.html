@@ -237,9 +237,19 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
-        .object-item .emoji {
-            font-size: 50px;
-            margin-bottom: 10px;
+        .object-item .object-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .object-item:hover .object-image {
+            transform: scale(1.1);
         }
 
         .object-item h4 {
@@ -453,7 +463,7 @@
             <h2>📜 Daftar Objek Sejarah</h2>
             <div class="objects-grid">
                 <div class="object-item">
-                    <div class="emoji">📜</div>
+                    <img src="assets/images/artifacts/ciaruteun.png" alt="Prasasti Ciaruteun" class="object-image" loading="lazy">
                     <h4>Prasasti Ciaruteun</h4>
                     <span class="barcode">Barcode 0</span>
                 </div>
