@@ -397,6 +397,192 @@
             }
         }
 
+        /* Credits Button */
+        #credits-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #667eea;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #credits-btn:hover {
+            transform: translateY(-2px);
+            background: white;
+        }
+        
+        /* Credits Modal */
+        #credits-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+        
+        #credits-modal.show {
+            display: flex;
+        }
+        
+        .credits-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: modalSlideUp 0.4s ease;
+        }
+        
+        .credits-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .credits-modal-title {
+            color: #667eea;
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .credits-close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s ease;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .credits-close-btn:hover {
+            color: #667eea;
+        }
+        
+        .credits-list {
+            list-style: none;
+        }
+        
+        .credit-item {
+            padding: 18px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+        
+        .credit-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .credit-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-weight: 700;
+            font-size: 13px;
+            margin-right: 10px;
+        }
+        
+        .credit-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        
+        .credit-source {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        
+        .credit-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 12px;
+            word-break: break-all;
+            display: inline-block;
+            margin-top: 4px;
+        }
+        
+        .credit-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Scrollbar Styling */
+        .credits-modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .credits-modal-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .credits-modal-content::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+        
+        .credits-modal-content::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+        
+        @media (max-width: 768px) {
+            .credits-modal-content {
+                padding: 20px;
+            }
+            
+            .credits-modal-title {
+                font-size: 20px;
+            }
+            
+            .credit-item {
+                padding: 15px;
+            }
+        }
+
         /* Hide A-Frame UI */
         .a-enter-vr-button,
         .a-orientation-modal {
@@ -420,6 +606,69 @@
 
     <!-- Back Button -->
     <a href="index.html" id="back-button">← Kembali</a>
+
+    <!-- Credits Button -->
+    <button id="credits-btn" onclick="openCredits()">
+        📷 Credits
+    </button>
+    
+    <!-- Credits Modal -->
+    <div id="credits-modal">
+        <div class="credits-modal-content">
+            <div class="credits-modal-header">
+                <h2 class="credits-modal-title">📷 Sumber Foto</h2>
+                <button class="credits-close-btn" onclick="closeCredits()">&times;</button>
+            </div>
+            <ul class="credits-list">
+                <li class="credit-item">
+                    <span class="credit-number">1</span>
+                    <div class="credit-title">Prasasti Ciaruteun</div>
+                    <div class="credit-source">Foto: Rahmad Ardiansyah</div>
+                    <a href="https://idsejarah.net/2019/04/isi-prasasti-ciaruteun-informasi-dan.html" target="_blank" class="credit-link">idsejarah.net</a>
+                </li>
+                <li class="credit-item">
+                    <span class="credit-number">2</span>
+                    <div class="credit-title">Kapak Genggam</div>
+                    <div class="credit-source">Foto: Rahmad Ardiansyah</div>
+                    <a href="https://idsejarah.net/2017/05/kapak-genggam-kapak-perimbas-kapak.html" target="_blank" class="credit-link">idsejarah.net</a>
+                </li>
+                <li class="credit-item">
+                    <span class="credit-number">3</span>
+                    <div class="credit-title">Kapak Lonjong</div>
+                    <div class="credit-source">Foto: satujam.com</div>
+                    <a href="https://satujam.com" target="_blank" class="credit-link">satujam.com</a>
+                </li>
+                <li class="credit-item">
+                    <span class="credit-number">4</span>
+                    <div class="credit-title">Kapak Persegi</div>
+                    <div class="credit-source">Foto: Lab Pendidikan Sejarah Universitas Pendidikan Indonesia</div>
+                </li>
+                <li class="credit-item">
+                    <span class="credit-number">5</span>
+                    <div class="credit-title">Kapak Lonjong</div>
+                    <div class="credit-source">Foto: Lab Pendidikan Sejarah Universitas Pendidikan Indonesia</div>
+                </li>
+                <li class="credit-item">
+                    <span class="credit-number">6</span>
+                    <div class="credit-title">Batu Dolmen</div>
+                    <div class="credit-source">Foto: Chuk S Widarsha</div>
+                    <a href="https://news.detik.com/berita-jawa-timur/d-5484978/batu-dolmen-di-bondowoso-selalu-membujur-dari-timur-ke-barat-ini-jawabannya" target="_blank" class="credit-link">Detik News</a>
+                </li>
+                <li class="credit-item">
+                    <span class="credit-number">7</span>
+                    <div class="credit-title">Kjokkenmoddinger</div>
+                    <div class="credit-source">Foto: Widya Lestari Ningsih (KOMPAS)</div>
+                    <a href="https://www.kompas.com/stori/read/2022/12/19/170000679/siapa-yang-pertama-kali-menemukan-kjokkenmoddinger-di-indonesia-" target="_blank" class="credit-link">Kompas.com</a>
+                </li>
+                <li class="credit-item">
+                    <span class="credit-number">8</span>
+                    <div class="credit-title">Menhir</div>
+                    <div class="credit-source">Foto: Rahmad Ardiansyah</div>
+                    <a href="https://idsejarah.net/2019/03/pengertian-menhir-dan-fungsinya-di.html" target="_blank" class="credit-link">idsejarah.net</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
     <!-- Instructions -->
     <div id="instructions">
@@ -779,6 +1028,22 @@
                 showQualityPopup(currentMarkerId);
             }
         }
+
+        // Credits Modal Functions
+        function openCredits() {
+            document.getElementById('credits-modal').classList.add('show');
+        }
+        
+        function closeCredits() {
+            document.getElementById('credits-modal').classList.remove('show');
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('credits-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCredits();
+            }
+        });
 
         // Show info modal (untuk marker 8-9)
         function showInfo(markerId) {
