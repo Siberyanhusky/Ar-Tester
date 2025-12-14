@@ -5,6 +5,20 @@
     "sceneFadeDuration": 1000,
     "autoLoad": true,
     "credit": "© 2025 Tim IT Pendidikan Sejarah UPI Angkatan 2022 Kelas B — Virtual Tour Prambanan dibuat dengan AI (DreamINA) untuk pembelajaran sejarah."
+    "sources": [
+      {
+        "author": "Ibrahim, M.",
+        "year": "1996",
+        "title": "KOMPLEKS CANDI PRAMBANAN DARI MASA KE MASA",
+        "location": "Jakarta: Direktoran Perlindungan dan Pembinaan Peninggalan Sejarah dan Purbakala"
+      },
+      {
+        "author": "Lestari, K. P.",
+        "year": "2024",
+        "title": "The Use of Prambanan Temple as a Source of History Learning for Tadris IPS IAIN Kudus Students",
+        "journal": "Jurnal Pendidikan IPS, 14(2), 339-347"
+      }
+    ]
   },
   "scenes": {
     "overview-aerial": {
