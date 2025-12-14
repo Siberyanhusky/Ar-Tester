@@ -4,7 +4,25 @@
     "author": "AR Sejarah Indonesia",
     "sceneFadeDuration": 1000,
     "autoLoad": true,
-    "credit": "© 2025 Tim IT Pendidikan Sejarah UPI Angkatan 2022 Kelas B — Virtual Tour Prambanan dibuat dengan AI (DreamINA) untuk pembelajaran sejarah."
+    "credit": "© 2025 Tim IT Pendidikan Sejarah UPI Angkatan 2022 Kelas B — Virtual Tour Prambanan dibuat dengan AI (DreamINA) untuk pembelajaran sejarah.",
+    "sources": [
+      {
+        "author": "UNESCO World Heritage Centre",
+        "year": "n.d.",
+        "title": "Borobudur Temple Compounds"
+      },
+      {
+        "author": "Balai Konservasi Borobudur",
+        "year": "2024",
+        "title": "Jurnal Konservasi Cagar Budaya Borobudur",
+        "journal": "Vol. XVIII"
+      },
+      {
+        "author": "Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi Republik Indonesia",
+        "year": "n.d.",
+        "title": "Stupa Candi Borobudur"
+      }
+    ]
   },
   "scenes": {
     "stupa-utama": {
